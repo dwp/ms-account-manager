@@ -1,0 +1,89 @@
+variables:
+  # Product
+  PRODUCT: pip-apply
+  # Config
+  BUILD_TYPE: MAVEN
+  MAVEN_IMAGE: "maven:3-jdk-11"
+  PITEST_TARGET_CLASSES: "uk.gov.dwp.health.account.*"
+  PITEST_TARGET_TEST_CLASSES: "uk.gov.dwp.health.account.manager.service.*,uk.gov.dwp.health.account.manager.api.*"
+  PITEST_EXCLUDED_TEST_CLASSES: "uk.gov.dwp.health.**.*IT"
+  MVN_OPTS: "-DLOG_LEVEL=INFO -DtargetClasses=${PITEST_TARGET_CLASSES} -DtargetTests=${PITEST_TARGET_TEST_CLASSES} -DexcludedTestClasses=${PITEST_EXCLUDED_TEST_CLASSES}"
+  MVN_CLI_OPTS: "--batch-mode"
+  REPO_OWNER: "Team Goldcrest"
+  REPO_PATTERN: "V3 CI"
+  PIP_APPLY_MOCKS_NAME: pip-apply-mocks
+  MOCK_IMAGE: "develop"
+  CI_PROJECT_NAME: ms-account-manager
+  GITHUB_REPO_NAME: ms-account-manager
+
+stages:
+  - update-version
+  - code-quality
+  - code-test
+  - application-build
+  - code-analysis
+  - image-build
+  - container-image-test
+  - component-test
+  - image-push
+  - update-project-metadata
+  - create-schedules
+  - repo-gen
+  - open-source
+
+include:
+  - local: "/gitlab-ci/includes.yml"
+
+required-fragment-check:
+  variables:
+    RULESET: MAVEN_CI
+
+create-develop-nightly-schedule:
+  extends: .add-schedule
+  variables:
+    SCHEDULE_NAME: Nightly-Develop-CI-Build
+    SCHEDULE_BRANCH: develop
+    SCHEDULE_CRON: "0 20 * * *"
+    RANDOMIZE_MINS: "true"
+
+.prepare-test: &prepare-test
+  before_script:
+    - apk add --no-cache py-pip jq
+    - pip install awscli
+    - eval $(aws ecr get-login --no-include-email --region eu-west-2 | sed 's|https://||')
+    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+    - export GITLAB_IMAGE="$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:${CI_COMMIT_SHA:0:8}"
+    - export MOCK_IMAGE=$(aws ssm get-parameter --name "/artifact/$PRODUCT/$PIP_APPLY_MOCKS_NAME/$MOCK_IMAGE" --with-decryption --output json | jq --raw-output '.Parameter.Value')
+
+api-test:
+  extends: .docker-compose-run
+  stage: component-test
+  variables:
+    DOCKER_COMPOSE_FILE: "docker-compose.yml"
+    DOCKER_COMPOSE_COMMAND: "--exit-code-from api-test"
+    MVN_OPTS: '-Dmaven.repo.local=~/.m2/repository'
+    MVN_M2: "~/.m2"
+  services:
+    - name: docker:dind@sha256:7b7ef8858c96e95fba85cbfa0d216db700a62a3c0fcddaa7a8f3b01b40679f42
+      command: [
+        "--registry-mirror=https://docker-cache.nonprod.dwpcloud.uk:5000",
+        "--insecure-registry=nexus.service.health-dev.dwpcloud.uk:5000" ]
+  <<: *prepare-test
+  after_script:
+    - docker logout
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - ~/.m2/repository/
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - target/test-reports/
+    when: always
+    expose_as: 'Account manager API Component Test Report'
+
+### DEFAULT RUNNER ###
+default:
+  tags:
+    - docker
+  image: alpine

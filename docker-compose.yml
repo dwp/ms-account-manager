@@ -1,0 +1,130 @@
+version: "2.1"
+
+networks:
+  test:
+
+services:
+
+  ms-account-manager:
+    image: '${GITLAB_IMAGE}'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - FEATURE_ENCRYPTION_DATA_ENABLED=true
+      - FEATURE_ENCRYPTION_MESSAGING_ENABLED=true
+      - FEATURE_DATA_CHANGESTREAM_ENABLED=true
+      - FEATURE_CORRELATION_ENABLED=true
+      - SPRING_PROFILES_ACTIVE=dev
+      - AWS_ACCESS_KEY_ID=my-key
+      - AWS_SECRET_ACCESS_KEY=its-a-secret
+      - ENCRYPTION_KMS_OVERRIDE=http://localstack:4566
+      - ENCRYPTION_DATA_KEY=awssecretkey
+      - TOTP_BASE_URL=http://wm-totp-authenticator:8080
+      - TOTP_NI_BASE_URL=http://wm-totp-authenticator:8080
+      - TOTP_VERIFY_PATH=/v1/totp/verify
+      - TOTP_GENERATE_PATH=/v1/totp/generate
+      - AWS_ENCRYPTION_KMS_OVERRIDE=http://localstack:4566
+      - AWS_ENCRYPTION_MESSAGE_DATA_KEY_ID=alias/test_event_request_id
+      - AWS_ENCRYPTION_MONGO_DATA_KEY_ID=alias/test_mongo_request_id
+      - AWS_ENCRYPTION_KMS_KEY_CACHE=true
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_COLLECTION=account
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_ROUTING_KEY=pip.account.mgr.stream
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_DATABASE=pip-apply-acc-mgr
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_SKIP_DECRYPTION=true
+      - UK_GOV_DWP_HEALTH_INTEGRATION_OUTBOUND_TOPIC_EXCHANGE=stream-topic
+      - UK_GOV_DWP_HEALTH_INTEGRATION_SNS_ENDPOINT_OVERRIDE=http://localstack:4566
+      - UK_GOV_DWP_HEALTH_INTEGRATION_SQS_ENDPOINT_OVERRIDE=http://localstack:4566
+      - UK_GOV_DWP_HEALTH_INTEGRATION_AWS_REGION=us-east-1
+      - UK_GOV_DWP_HEALTH_INTEGRATION_MESSAGING_TYPE=aws
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/pip-apply-acc-mgr
+      - MONGOCK_CHANGE_LOGS_SCAN_PACKAGE=uk.gov.dwp.health.account.manager.migration
+      - FEATURE_MONGO_STABLE_API_ENABLED=true
+    entrypoint:
+      - java
+      - -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
+      - -jar
+      - /account-manager.jar
+    expose:
+      - 8080
+      - 5009
+    depends_on:
+      - wm-totp-authenticator
+      - localstack
+      - mongo
+    ports:
+      - "9930:8080"
+      - "5009:5009"
+    networks:
+      - test
+
+  wm-totp-authenticator:
+    image: '${MOCK_IMAGE}'
+    container_name: wm-totp-authenticator
+    expose:
+      - 8080
+    ports:
+      - "9920:8080"
+    networks:
+      - test
+    command: --global-response-templating --verbose
+    logging:
+      driver: none
+
+  localstack:
+    image: ${LOCALSTACK_IMAGE}
+    environment:
+      SERVICES: kms, sqs, sns
+      AWS_DEFAULT_REGION: eu-west-2
+      HOSTNAME_EXTERNAL: localstack
+    volumes:
+      - ./config/localstack:/docker-entrypoint-initaws.d
+    healthcheck:
+      test: [ "CMD", "curl", "http://localhost:4566" ]
+    ports:
+      - "4566:4566"
+    networks:
+      - test
+    logging:
+      driver: none
+
+  mongo:
+    image: mongo:5.0@sha256:26b6f0ef7e3e0dccf5c3687c5bf61ead6a60b59cc613668eabf2ca80a6fd7c75
+    command: --replSet rs0 --bind_ip_all
+    environment:
+      MONGO_INITDB_DATABASE: pip-apply-acc-mgr
+    volumes:
+      - ./config/mongo/init-replicaset.js:/docker-entrypoint-initdb.d/init-replicaset.js
+      - ./config/mongo/seed.js:/docker-entrypoint-initdb.d/seed.js
+    networks:
+      - test
+    expose:
+      - 27017
+    ports:
+      - "27017:27017"
+    logging:
+      driver: none
+
+  api-test:
+    container_name: api-test
+    image: '${MAVEN_IMAGE}'
+    entrypoint: /bin/bash -c
+    command:
+      - |
+        until [ `curl -s -o /dev/null -w "%{http_code}" http://ms-account-manager:8080/actuator/health` = "200" ]; do echo "service not available, sleeping 10."; sleep 10; done
+        sleep 30
+        mvn ${MVN_OPTS} verify -Papi-component-tests
+    working_dir: /usr/src
+    environment:
+      HOST: http://ms-account-manager
+      PORT: 8080
+      MONGODB_HOST: mongo
+      MONGODB_PORT: 27017
+    volumes:
+      - .:/usr/src
+      - ${MVN_M2}:/root/.m2
+      - ${MVN_SETTINGS_FILE_SAAS}:/root/.m2/settings.xml
+      - ./target/test-reports:/usr/src/target/test-reports
+    networks:
+      - test
+

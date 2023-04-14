@@ -1,0 +1,9 @@
+schemaVersion: "2.0.0"
+
+fileExistenceTests:
+  - name: 'Jar File'
+    path: '/account-manager.jar'
+    shouldExist: true
+
+metadataTest:
+  entrypoint: ["java", "-jar", "/account-manager.jar"]

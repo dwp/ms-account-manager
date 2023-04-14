@@ -1,0 +1,82 @@
+app_name: @project.artifactId@
+app_version: @project.version@
+
+spring:
+  main:
+    banner-mode: 'off'
+  jmx:
+    enabled: false
+  profiles:
+    active: dev
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/example
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, info, health
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    prometheus:
+      enabled: true
+  health:
+    mongo:
+      enabled: false
+
+mongock:
+  change-logs-scan-package: uk.gov.dwp.health.account.manager.migration
+
+feature:
+  mongo:
+    stable:
+      api:
+        enabled: ${FEATURE_MONGO_STABLE_API_ENABLED:true}
+
+#aws:
+#  encryption:
+#    kms-override: http://localhost:4566
+#    message-data-key-id: alias/test_event_request_id
+#    mongo-data-key-id: alias/test_mongo_request_id
+#    kms-key-cache: true
+#  access:
+#    key-id: test
+#  secret:
+#    access-key: test
+#feature:
+#  encryption:
+#    data:
+#      enabled: true
+#    messaging:
+#      enabled: true
+#  data:
+#    changestream:
+#      enabled: true
+#  correlation:
+#    enabled: true
+#uk:
+#  gov:
+#    dwp:
+#      health:
+#        changestream:
+#          channels:
+#            - collection: account
+#              routingKey: pip.account.mgr.stream
+#              database: example
+#              skipDecryption: true
+#        integration:
+#          messaging-type: aws
+#          outbound-topic-exchange: stream-topic
+#          sns-endpoint-override: http://localhost:4566
+#          aws-region: US_EAST_1
+#
+#
+#totp:
+#  baseUrl: http://ms-totp-authenticator:8080
+#  verifyPath: /v1/totp/verify
+#  generatePath: /v1/totp/generate
