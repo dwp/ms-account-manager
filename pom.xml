@@ -10,7 +10,7 @@
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-account-manager</artifactId>
-  <version>4.8.0</version>
+  <version>4.9.0</version>
   <name>ms-account-manager</name>
   <description>Micro service provides account management &amp; authorization</description>
 
@@ -24,7 +24,7 @@
     <dwp.correlationId.version>1.0.0-bd6576e3</dwp.correlationId.version>
     <dwp.postcode-validation.version>1.3.0-f0fc5e75</dwp.postcode-validation.version>
     <snakeyaml.version>1.33</snakeyaml.version>
-    <spring.version>5.3.26</spring.version>
+    <spring.version>5.3.27</spring.version>
     <swagger-annotations.version>1.6.10</swagger-annotations.version>
     <openapi-codegen-maven-plugin.version>4.3.1</openapi-codegen-maven-plugin.version>
     <mongock.version>4.1.19</mongock.version>
