@@ -24,6 +24,8 @@ services:
       - TOTP_NI_BASE_URL=http://wm-totp-authenticator:8080
       - TOTP_VERIFY_PATH=/v1/totp/verify
       - TOTP_GENERATE_PATH=/v1/totp/generate
+      - PIPCSGW_CHECK_CAN_APPLY_PATH=can-apply
+      - PIPCSGW_BASE_URL=http://wm-pipcs-gw:8080
       - AWS_ENCRYPTION_KMS_OVERRIDE=http://localstack:4566
       - AWS_ENCRYPTION_MESSAGE_DATA_KEY_ID=alias/test_event_request_id
       - AWS_ENCRYPTION_MONGO_DATA_KEY_ID=alias/test_mongo_request_id
@@ -35,7 +37,7 @@ services:
       - UK_GOV_DWP_HEALTH_INTEGRATION_OUTBOUND_TOPIC_EXCHANGE=stream-topic
       - UK_GOV_DWP_HEALTH_INTEGRATION_SNS_ENDPOINT_OVERRIDE=http://localstack:4566
       - UK_GOV_DWP_HEALTH_INTEGRATION_SQS_ENDPOINT_OVERRIDE=http://localstack:4566
-      - UK_GOV_DWP_HEALTH_INTEGRATION_AWS_REGION=us-east-1
+      - UK_GOV_DWP_HEALTH_INTEGRATION_AWS_REGION=eu-west-2
       - UK_GOV_DWP_HEALTH_INTEGRATION_MESSAGING_TYPE=aws
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/pip-apply-acc-mgr
       - MONGOCK_CHANGE_LOGS_SCAN_PACKAGE=uk.gov.dwp.health.account.manager.migration
@@ -49,9 +51,12 @@ services:
       - 8080
       - 5009
     depends_on:
-      - wm-totp-authenticator
-      - localstack
-      - mongo
+      mongo:
+        condition: service_started
+      localstack:
+        condition: service_healthy
+      wm-totp-authenticator:
+        condition: service_started
     ports:
       - "9930:8080"
       - "5009:5009"
@@ -65,6 +70,19 @@ services:
       - 8080
     ports:
       - "9920:8080"
+    networks:
+      - test
+    command: --global-response-templating --verbose
+    logging:
+      driver: none
+
+  wm-pipcs-gw:
+    image: '${MOCK_IMAGE}'
+    container_name: wm-pipcs-gw
+    expose:
+      - 8080
+    ports:
+      - "9921:8080"
     networks:
       - test
     command: --global-response-templating --verbose
@@ -89,7 +107,7 @@ services:
       driver: none
 
   mongo:
-    image: mongo:5.0@sha256:26b6f0ef7e3e0dccf5c3687c5bf61ead6a60b59cc613668eabf2ca80a6fd7c75
+    image: mongo:5.0@sha256:ee514514754ffdb13597a894bdae90fdabbe4c0926bf96b40a84d1233782bcc1
     command: --replSet rs0 --bind_ip_all
     environment:
       MONGO_INITDB_DATABASE: pip-apply-acc-mgr

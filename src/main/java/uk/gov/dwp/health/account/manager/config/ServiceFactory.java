@@ -25,6 +25,7 @@ import uk.gov.dwp.health.account.manager.service.TotpRequestService;
 import uk.gov.dwp.health.account.manager.service.TotpVerifyService;
 import uk.gov.dwp.health.account.manager.service.impl.Account1FAuthImpl;
 import uk.gov.dwp.health.account.manager.service.impl.Account2FAuthImpl;
+import uk.gov.dwp.health.account.manager.service.impl.AccountCheckCanApplyV5Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountCreateImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountCreateV3Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountCreateV4Impl;
@@ -39,6 +40,7 @@ import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateClaimantDetai
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateEmailImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateNinoImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdatePasswordImpl;
+import uk.gov.dwp.health.account.manager.service.impl.CheckCanApplyService;
 
 @Slf4j
 @Configuration
@@ -50,6 +52,7 @@ public class ServiceFactory {
   private final SecureHashService<String, String> secureHashService;
   private final ClaimantRepository claimantRepository;
   private final AccountDataMapper dataMapper;
+  private final CheckCanApplyService checkCanApplyService;
 
   @Value("${account.manager.allow-failure:4}")
   private int maxAllowedFailure;
@@ -60,13 +63,15 @@ public class ServiceFactory {
       TotpRequestService totpRequestService,
       SecureHashService<String, String> secureHashService,
       ClaimantRepository claimantRepository,
-      @Qualifier("accountDataMapper") AccountDataMapper dataMapper) {
+      @Qualifier("accountDataMapper") AccountDataMapper dataMapper,
+      CheckCanApplyService checkCanApplyService) {
     this.claimantService = claimantService;
     this.totpVerifyService = totpVerifyService;
     this.totpRequestService = totpRequestService;
     this.secureHashService = secureHashService;
     this.claimantRepository = claimantRepository;
     this.dataMapper = dataMapper;
+    this.checkCanApplyService = checkCanApplyService;
   }
 
   @Bean
@@ -136,6 +141,12 @@ public class ServiceFactory {
   public AccountGetClaimantDetailsV4Impl accountGetClaimantDetailsV4() {
     log.info("Creating AccountGetClaimantDetails v4 bean instance");
     return new AccountGetClaimantDetailsV4Impl(claimantRepository);
+  }
+
+  @Bean
+  public AccountCheckCanApplyV5Impl accountCheckCanApplyV5() {
+    log.info("Creating AccountCheckCanApply v5 bean instance");
+    return new AccountCheckCanApplyV5Impl(checkCanApplyService);
   }
 
   @Bean

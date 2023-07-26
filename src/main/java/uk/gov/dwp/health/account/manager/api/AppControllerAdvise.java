@@ -17,11 +17,11 @@ import uk.gov.dwp.health.account.manager.exception.AccountExistException;
 import uk.gov.dwp.health.account.manager.exception.AccountLockedException;
 import uk.gov.dwp.health.account.manager.exception.AccountNotFoundException;
 import uk.gov.dwp.health.account.manager.exception.AccountSetupException;
+import uk.gov.dwp.health.account.manager.exception.CanApplyCheckFailedException;
 import uk.gov.dwp.health.account.manager.exception.DataValidationException;
 import uk.gov.dwp.health.account.manager.exception.ExternalServiceException;
 import uk.gov.dwp.health.account.manager.exception.UnauthorizedException;
 import uk.gov.dwp.health.account.manager.openapi.model.FailureResponse;
-import uk.gov.dwp.health.pip.monitoring.exception.RestResponseException;
 
 import javax.validation.ConstraintViolationException;
 import java.io.PrintWriter;
@@ -43,8 +43,7 @@ public class AppControllerAdvise {
   @ExceptionHandler(
       value = {
         ExternalServiceException.class,
-        ResourceAccessException.class,
-        RestResponseException.class
+        ResourceAccessException.class
       })
   public ResponseEntity<Void> handleExternalServerErrorException(Exception ex) {
     log.error("External Service/API not behave correctly {}", ex.getMessage());
@@ -55,6 +54,12 @@ public class AppControllerAdvise {
   public ResponseEntity<Void> handleUnauthorizedException(UnauthorizedException ex) {
     log.info("Failed authorize login {}", ex.getMessage());
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+  }
+
+  @ExceptionHandler(value = {CanApplyCheckFailedException.class})
+  public ResponseEntity<Void> canApplyCheckFailedException(CanApplyCheckFailedException ex) {
+    log.info("Account already exists");
+    return ResponseEntity.status(ex.getStatusCode()).build();
   }
 
   @ExceptionHandler(

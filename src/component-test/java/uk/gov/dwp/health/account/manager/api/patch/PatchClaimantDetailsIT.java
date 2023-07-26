@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.patchClaimantDetailsUrl;
 import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.postAccountUrl;
 
-public class PatchClaimantDetailsIT extends ApiTest {
+class PatchClaimantDetailsIT extends ApiTest {
   private CreateAccountRequest createAccountRequest;
   private AccountCreationResponse accountCreationResponse;
 
@@ -28,7 +28,7 @@ public class PatchClaimantDetailsIT extends ApiTest {
   }
 
   @Test
-  public void shouldReturn202StatusCodeForClaimantDetailsPatchUpdate() {
+  void shouldReturn202StatusCodeForClaimantDetailsPatchUpdate() {
     UpdateAccountRequest updateAccountRequest =
         UpdateAccountRequest.builder()
             .currentEmail(createAccountRequest.getEmail())
@@ -53,10 +53,11 @@ public class PatchClaimantDetailsIT extends ApiTest {
     assertThat(accountDetailResponse.getUserJourney())
         .isEqualTo(createAccountRequest.getUserJourney());
     assertThat(accountDetailResponse.getResearchContact()).isEqualTo("No");
+    assertThat(accountDetailResponse.getHasPassword()).isFalse();
   }
 
   @Test
-  public void shouldReturn400StatusCodeForInvalidClaimantDetailsPatchUpdate() {
+  void shouldReturn400StatusCodeForInvalidClaimantDetailsPatchUpdate() {
     UpdateAccountRequest updateAccountRequest =
         UpdateAccountRequest.builder()
             .ref(accountCreationResponse.getRef())
@@ -70,7 +71,7 @@ public class PatchClaimantDetailsIT extends ApiTest {
   }
 
   @Test
-  public void shouldReturn401StatusCodeForNoneExistentClaimantDetailsPatchUpdate() {
+  void shouldReturn401StatusCodeForNoneExistentClaimantDetailsPatchUpdate() {
     UpdateAccountRequest updateAccountRequest =
         UpdateAccountRequest.builder().ref("b0a0d4fb-e6c8-419e-8cb9-af45914bd1a6").build();
 
@@ -80,7 +81,7 @@ public class PatchClaimantDetailsIT extends ApiTest {
   }
 
   @Test
-  public void shouldReturn409StatusCodeForExistingEmailPatchUpdate() {
+  void shouldReturn409StatusCodeForExistingEmailPatchUpdate() {
     CreateAccountRequest createSecondAccountRequest =
         CreateAccountRequest.builder().email("abc@dwp.gov.uk").nino("RN000003C").build();
     AccountCreationResponse accountCreationResponse =
@@ -100,20 +101,20 @@ public class PatchClaimantDetailsIT extends ApiTest {
   }
 
   @Test
-  public void shouldReturn409StatusCodeForExistingNinoPatchUpdate() {
+  void shouldReturn409StatusCodeForExistingNinoPatchUpdate() {
     CreateAccountRequest createSecondAccountRequest =
-            CreateAccountRequest.builder().email("abc@dwp.gov.uk").nino("RN000003C").build();
+        CreateAccountRequest.builder().email("abc@dwp.gov.uk").nino("RN000003C").build();
     AccountCreationResponse accountCreationResponse =
-            postRequest(postAccountUrl(), createSecondAccountRequest).as(AccountCreationResponse.class);
+        postRequest(postAccountUrl(), createSecondAccountRequest).as(AccountCreationResponse.class);
     String secondAccountRefId = accountCreationResponse.getRef();
 
     UpdateAccountRequest updateAccountRequest =
-            UpdateAccountRequest.builder()
-                    .ref(secondAccountRefId)
-                    .currentNino("RN000003C")
-                    .currentEmail("abc@dwp.gov.uk")
-                    .newNino(createAccountRequest.getNino())
-                    .build();
+        UpdateAccountRequest.builder()
+            .ref(secondAccountRefId)
+            .currentNino("RN000003C")
+            .currentEmail("abc@dwp.gov.uk")
+            .newNino(createAccountRequest.getNino())
+            .build();
     Response response = patchRequest(patchClaimantDetailsUrl(), updateAccountRequest);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT.value());

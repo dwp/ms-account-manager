@@ -1,5 +1,6 @@
 package uk.gov.dwp.health.account.manager.api;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.springframework.web.client.ResourceAccessException;
 import uk.gov.dwp.health.account.manager.exception.AccountAuthFailException;
 import uk.gov.dwp.health.account.manager.exception.AccountExistException;
 import uk.gov.dwp.health.account.manager.exception.AccountLockedException;
+import uk.gov.dwp.health.account.manager.exception.CanApplyCheckFailedException;
 import uk.gov.dwp.health.account.manager.exception.DataValidationException;
 import uk.gov.dwp.health.account.manager.exception.ExternalServiceException;
 import uk.gov.dwp.health.account.manager.exception.UnauthorizedException;
@@ -52,6 +54,13 @@ class AppControllerAdviseTest {
   }
 
   @Test
+  void testHandleCanApplyCheckFailedException() {
+    var exp = new CanApplyCheckFailedException();
+    ResponseEntity<Void> actual = cut.canApplyCheckFailedException(exp);
+    assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.PRECONDITION_FAILED);
+  }
+
+  @Test
   @DisplayName("testHandle400BadRequestException")
   void testHandle400BadRequestException() {
     var message = "nino format validation fail";
@@ -69,8 +78,11 @@ class AppControllerAdviseTest {
     var actual = cut.handleBadRequestException(exp);
     assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     assertThat(actual.getBody()).isNull();
-    assertThat(testLogger.getLoggingEvents())
-        .containsExactly(new LoggingEvent(Level.INFO, "authentication fail"));
+    final ImmutableList<LoggingEvent> loggingEvents = testLogger.getLoggingEvents();
+    assertThat(loggingEvents).hasSize(1);
+    final LoggingEvent loggingEvent = loggingEvents.get(0);
+    assertThat(loggingEvent.getMessage()).isEqualTo("authentication fail");
+    assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
   }
 
   @Test
@@ -80,8 +92,11 @@ class AppControllerAdviseTest {
     var actual = cut.handle403(exp);
     assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(actual.getBody()).isNull();
-    assertThat(testLogger.getLoggingEvents())
-        .containsExactly(new LoggingEvent(Level.INFO, "account locked"));
+    final ImmutableList<LoggingEvent> loggingEvents = testLogger.getLoggingEvents();
+    assertThat(loggingEvents).hasSize(1);
+    final LoggingEvent loggingEvent = loggingEvents.get(0);
+    assertThat(loggingEvent.getMessage()).isEqualTo("account locked");
+    assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
   }
 
   @Test
@@ -91,12 +106,12 @@ class AppControllerAdviseTest {
     var actual = cut.handleExternalServerErrorException(exp);
     assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     assertThat(actual.getBody()).isNull();
-    assertThat(testLogger.getLoggingEvents())
-        .containsExactly(
-            new LoggingEvent(
-                Level.ERROR,
-                "External Service/API not behave correctly {}",
-                "fail to request with totp service"));
+    final ImmutableList<LoggingEvent> loggingEvents = testLogger.getLoggingEvents();
+    assertThat(loggingEvents).hasSize(1);
+    final LoggingEvent loggingEvent = loggingEvents.get(0);
+    assertThat(loggingEvent.getMessage()).isEqualTo("External Service/API not behave correctly {}");
+    assertThat(loggingEvent.getLevel()).isEqualTo(Level.ERROR);
+    assertThat(loggingEvent.getArguments()).containsExactly("fail to request with totp service");
   }
 
   @Test
@@ -106,12 +121,12 @@ class AppControllerAdviseTest {
     var actual = cut.handleExternalServerErrorException(exp);
     assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     assertThat(actual.getBody()).isNull();
-    assertThat(testLogger.getLoggingEvents())
-        .containsExactly(
-            new LoggingEvent(
-                Level.ERROR,
-                "External Service/API not behave correctly {}",
-                "downstream service is not online"));
+    final ImmutableList<LoggingEvent> loggingEvents = testLogger.getLoggingEvents();
+    assertThat(loggingEvents).hasSize(1);
+    final LoggingEvent loggingEvent = loggingEvents.get(0);
+    assertThat(loggingEvent.getMessage()).isEqualTo("External Service/API not behave correctly {}");
+    assertThat(loggingEvent.getLevel()).isEqualTo(Level.ERROR);
+    assertThat(loggingEvent.getArguments()).containsExactly("downstream service is not online");
   }
 
   @Test

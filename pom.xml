@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.11</version>
+    <version>2.7.12</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-account-manager</artifactId>
-  <version>4.9.0</version>
+  <version>5.0.0</version>
   <name>ms-account-manager</name>
   <description>Micro service provides account management &amp; authorization</description>
 
@@ -21,10 +21,8 @@
     <client.base.package.name>uk.gov.dwp.health.account.manager</client.base.package.name>
     <dwp.message-broker.version>2.10.0-827dccdb</dwp.message-broker.version>
     <dwp-mongo-change-stream-starter.version>3.2.0-dd59aa6b</dwp-mongo-change-stream-starter.version>
-    <dwp.correlationId.version>1.0.0-bd6576e3</dwp.correlationId.version>
     <dwp.postcode-validation.version>1.3.0-f0fc5e75</dwp.postcode-validation.version>
-    <snakeyaml.version>1.33</snakeyaml.version>
-    <spring.version>5.3.27</spring.version>
+    <dwp-meta-data-logger.version>2.0.1-b4ab9a22</dwp-meta-data-logger.version>
     <swagger-annotations.version>1.6.10</swagger-annotations.version>
     <openapi-codegen-maven-plugin.version>4.3.1</openapi-codegen-maven-plugin.version>
     <mongock.version>4.1.19</mongock.version>
@@ -49,6 +47,7 @@
     <restassured.version>5.3.0</restassured.version>
     <allure.version>2.21.0</allure.version>
     <java-faker.version>1.0.2</java-faker.version>
+    <exec.maven.plugin.version>3.1.0</exec.maven.plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -86,25 +85,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>uk.gov.dwp.health.pip</groupId>
-      <artifactId>correlationId-springboot-starter</artifactId>
-      <version>${dwp.correlationId.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.yaml</groupId>
-          <artifactId>snakeyaml</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-expression</artifactId>
-      <version>${spring.version}</version>
+      <groupId>uk.gov.dwp.health.logging</groupId>
+      <artifactId>dwp-meta-data-logger</artifactId>
+      <version>${dwp-meta-data-logger.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -383,9 +366,34 @@
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v2/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v3/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v4/api/*</exclude>
+            <exclude>**uk/gov/dwp/health/account/manager/openapi/v5/api/*</exclude>
           </excludes>
         </configuration>
       </plugin>
+      <!--Git submodule update-->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec.maven.plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>initialize</phase>
+            <id>workflow submodule update</id>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>git</executable>
+          <arguments>
+            <argument>submodule</argument>
+            <argument>update</argument>
+            <argument>--init</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+
       <plugin>
         <!-- This 2019 version is required for OpenAPI 3 -->
         <groupId>org.openapitools</groupId>
@@ -397,7 +405,7 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <inputSpec>${project.basedir}/api-spec/openapi-spec-v1.yaml</inputSpec>
+              <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v1.yaml</inputSpec>
               <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
@@ -423,7 +431,7 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <inputSpec>${project.basedir}/api-spec/openapi-spec-v2.yaml</inputSpec>
+              <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v2.yaml</inputSpec>
               <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
@@ -447,7 +455,7 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <inputSpec>${project.basedir}/api-spec/openapi-spec-v3.yaml</inputSpec>
+              <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v3.yaml</inputSpec>
               <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
@@ -471,12 +479,36 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <inputSpec>${project.basedir}/api-spec/openapi-spec-v4.yaml</inputSpec>
+              <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v4.yaml</inputSpec>
               <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
               <apiPackage>${client.base.package.name}.openapi.v4.api</apiPackage>
+              <configOptions>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
+                <artifactVersion>${project.version}</artifactVersion>
+                <bigDecimalAsString>true</bigDecimalAsString>
+                <interfaceOnly>true</interfaceOnly>
+                <java8>true</java8>
+                <useBeanValidation>true</useBeanValidation>
+                <delegatePattern>true</delegatePattern>
+              </configOptions>
+            </configuration>
+          </execution>
+          <execution>
+            <id>account manager v5</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v5.yaml</inputSpec>
+              <language>spring</language>
+              <library>spring-boot</library>
+              <generateSupportingFiles>true</generateSupportingFiles>
+              <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
+              <apiPackage>${client.base.package.name}.openapi.v5.api</apiPackage>
               <configOptions>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>${project.artifactId}</artifactId>

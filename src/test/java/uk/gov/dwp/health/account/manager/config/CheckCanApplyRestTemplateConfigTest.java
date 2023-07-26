@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.RestTemplate;
-import uk.gov.dwp.health.account.manager.http.HttpRespStatusHandler;
+import uk.gov.dwp.health.account.manager.http.CheckCanApplyHttpRespStatusHandler;
 import uk.gov.dwp.health.logging.OutgoingInterceptor;
 
 import java.util.List;
@@ -14,24 +14,24 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AppConfigTest {
+class CheckCanApplyRestTemplateConfigTest {
 
-  private AppConfig underTest;
+  private CheckCanApplyRestTemplateConfig checkCanApplyRestTemplateConfig;
 
   @BeforeEach
   void setup() {
-    underTest = new AppConfig();
+    checkCanApplyRestTemplateConfig = new CheckCanApplyRestTemplateConfig();
   }
 
   @Test
-  void testCreateRestTemplateBean() {
+  void testCreateCheckCanApplyRestTemplateBean() {
     var builder = mock(RestTemplateBuilder.class);
-    var errorHandler = mock(HttpRespStatusHandler.class);
+    var errorHandler = mock(CheckCanApplyHttpRespStatusHandler.class);
     var interceptor = mock(OutgoingInterceptor.class);
     when(builder.errorHandler(errorHandler)).thenReturn(builder);
     when(builder.interceptors(any(List.class))).thenReturn(builder);
     when(builder.build()).thenReturn(new RestTemplate());
-    var actual = underTest.restTemplate(errorHandler, builder, interceptor);
+    var actual = checkCanApplyRestTemplateConfig.checkCanApplyRestTemplate(errorHandler, builder, interceptor);
     assertThat(actual).isNotNull();
   }
 }

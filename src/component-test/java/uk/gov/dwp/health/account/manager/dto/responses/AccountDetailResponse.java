@@ -22,4 +22,6 @@ public class AccountDetailResponse {
     @JsonProperty("user_journey")
     private String userJourney;
     private String researchContact;
+    @JsonProperty("has_password")
+    private Boolean hasPassword;
 }

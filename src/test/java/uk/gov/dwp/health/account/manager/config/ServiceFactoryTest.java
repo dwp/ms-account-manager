@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.dwp.health.account.manager.service.*;
+import uk.gov.dwp.health.account.manager.service.impl.AccountCheckCanApplyV5Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountCreateImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountCreateV3Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountGetClaimantDetailsImpl;
@@ -100,5 +101,11 @@ class ServiceFactoryTest {
   @DisplayName("test create update claimant details bean instance")
   void testCreateUpdateClaimantDetailsBeanInstance() {
     assertThat(cut.accountUpdateClaimantDetails()).isInstanceOf(AccountUpdateClaimantDetails.class);
+  }
+
+  @Test
+  @DisplayName("test check can apply bean instance")
+  void testCreateCheckCanApplyBeanInstance() {
+    assertThat(cut.accountCheckCanApplyV5()).isInstanceOf(AccountCheckCanApplyV5Impl.class);
   }
 }

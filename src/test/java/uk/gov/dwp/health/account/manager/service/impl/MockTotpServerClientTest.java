@@ -1,7 +1,9 @@
 package uk.gov.dwp.health.account.manager.service.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import uk.gov.dwp.health.account.manager.config.AppConfig;
 import uk.gov.dwp.health.account.manager.config.properties.TotpClientProperties;
 import uk.gov.dwp.health.account.manager.entity.Region;
 import uk.gov.dwp.health.account.manager.exception.ExternalServiceException;
@@ -29,9 +30,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withUnauthorizedRequest;
 
+@AutoConfigureWebClient(registerRestTemplate=true)
 @RestClientTest(
     value = {
-      AppConfig.class,
       TotpClientProperties.class,
       HttpRespStatusHandler.class,
       TotpClientServiceImpl.class,
@@ -50,6 +51,11 @@ class MockTotpServerClientTest {
   @Autowired private RestTemplate restTemplate;
   @Autowired private MockRestServiceServer totpServiceServer;
   @MockBean private MongoTemplate mongoTemplate;
+
+  @BeforeEach
+  void setup() {
+    restTemplate.setErrorHandler(new HttpRespStatusHandler());
+  }
 
   @Test
   void testPostGenerateTotpRequest() {

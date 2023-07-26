@@ -8,4 +8,5 @@
   <suppress checks="AbbreviationAsWordInName" files=".*"/>
   <suppress checks="MissingJavadocType" files=".*"/>
   <suppress checks="LineLengthCheck" files="InputValidator.java"/>
+  <suppress checks="ParameterName" files="V5AccountManagerApiImpl.java"/>
 </suppressions>

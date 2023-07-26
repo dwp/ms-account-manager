@@ -56,6 +56,10 @@ totp:
   verifyPath: /v1/totp/verify
   generatePath: /v1/totp/generate
 
+pipcsgw:
+  baseUrl: http://wm-pipcs-gw:8080
+  checkCanApplyPath: can-apply
+
 feature:
   encryption:
     messaging:

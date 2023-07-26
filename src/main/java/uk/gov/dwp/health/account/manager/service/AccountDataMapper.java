@@ -6,6 +6,9 @@ import uk.gov.dwp.health.account.manager.openapi.model.AccountDetails;
 import uk.gov.dwp.health.account.manager.openapi.model.V3AccountDetails;
 import uk.gov.dwp.health.account.manager.openapi.model.V4AccountDetails;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 @Service("accountDataMapper")
 public class AccountDataMapper {
 
@@ -56,16 +59,24 @@ public class AccountDataMapper {
     details.setMobilePhone(claimant.getMobileNumber());
     details.setNino(claimant.getNino());
     details.setRegion(
-            claimant.getRegion() == null
-                    ? V4AccountDetails.RegionEnum.GB
-                    : V4AccountDetails.RegionEnum.valueOf(claimant.getRegion().name()));
+        claimant.getRegion() == null
+            ? V4AccountDetails.RegionEnum.GB
+            : V4AccountDetails.RegionEnum.valueOf(claimant.getRegion().name()));
     details.setUserJourney(
-            V4AccountDetails.UserJourneyEnum.fromValue(claimant.getUserJourney().name()));
+        V4AccountDetails.UserJourneyEnum.fromValue(claimant.getUserJourney().name()));
     details.setResearchContact(
-            claimant.getResearchContact() == null
-                    ? V4AccountDetails.ResearchContactEnum.NO
-                    : V4AccountDetails.ResearchContactEnum
-                      .fromValue(claimant.getResearchContact().name()));
+        claimant.getResearchContact() == null
+            ? V4AccountDetails.ResearchContactEnum.NO
+            : V4AccountDetails.ResearchContactEnum.fromValue(claimant.getResearchContact().name()));
+    details.setHasPassword(getHasPassword(claimant));
     return details;
+  }
+
+  private Boolean getHasPassword(Claimant claimant) {
+    if (claimant.getAuth() == null) {
+      return FALSE;
+    } else {
+      return claimant.getAuth().getPassword() == null ? FALSE : TRUE;
+    }
   }
 }

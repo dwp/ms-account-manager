@@ -28,11 +28,20 @@ stages:
   - image-push
   - update-project-metadata
   - create-schedules
-  - repo-gen
   - open-source
+  - update-changelog
+  - release-mr-main
+  - release-tag
+  - release-update-version
+  - release-mr-develop
 
 include:
   - local: "/gitlab-ci/includes.yml"
+
+
+trivy-container:
+  variables:
+    HIGH_SUPPRESSIONS: ""
 
 required-fragment-check:
   variables:
@@ -64,7 +73,7 @@ api-test:
     MVN_OPTS: '-Dmaven.repo.local=~/.m2/repository'
     MVN_M2: "~/.m2"
   services:
-    - name: docker:dind@sha256:7b7ef8858c96e95fba85cbfa0d216db700a62a3c0fcddaa7a8f3b01b40679f42
+    - name: docker:dind@sha256:ff3b9bc6b87e85ce3a374eef7a8daeb3b23cfa6fa6024382e63041a940cc25b4
       command: [
         "--registry-mirror=https://docker-cache.nonprod.dwpcloud.uk:5000",
         "--insecure-registry=nexus.service.health-dev.dwpcloud.uk:5000" ]
@@ -86,4 +95,4 @@ api-test:
 default:
   tags:
     - docker
-  image: alpine
+  image: alpine@sha256:02bb6f428431fbc2809c5d1b41eab5a68350194fb508869a33cb1af4444c9b11

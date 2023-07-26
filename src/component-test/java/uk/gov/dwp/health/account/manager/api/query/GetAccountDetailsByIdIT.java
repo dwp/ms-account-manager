@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.getAccountByIDUrl;
 import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.postAccountUrl;
 
-public class GetAccountDetailsByIdIT extends ApiTest {
+class GetAccountDetailsByIdIT extends ApiTest {
   private CreateAccountRequest createAccountRequest;
   private AccountCreationResponse accountCreationResponse;
 
@@ -22,11 +22,12 @@ public class GetAccountDetailsByIdIT extends ApiTest {
   public void testSetup() {
     MongoClientConnection.emptyMongoCollection();
     createAccountRequest = CreateAccountRequest.builder().build();
-    accountCreationResponse = postRequest(postAccountUrl(), createAccountRequest).as(AccountCreationResponse.class);
+    accountCreationResponse =
+        postRequest(postAccountUrl(), createAccountRequest).as(AccountCreationResponse.class);
   }
 
   @Test
-  public void shouldReturn200StatusCodeAndAccountDetailsWhenRetrieveAccountById() {
+  void shouldReturn200StatusCodeAndAccountDetailsWhenRetrieveAccountById() {
     Response response = getRequest(getAccountByIDUrl(accountCreationResponse.getRef()));
     AccountDetailResponse accountDetailResponse = response.as(AccountDetailResponse[].class)[0];
 
@@ -37,10 +38,13 @@ public class GetAccountDetailsByIdIT extends ApiTest {
     assertThat(accountDetailResponse.getSurname()).isEqualTo(createAccountRequest.getSurname());
     assertThat(accountDetailResponse.getForename()).isEqualTo(createAccountRequest.getForename());
     assertThat(accountDetailResponse.getPostcode()).isEqualTo(createAccountRequest.getPostcode());
-    assertThat(accountDetailResponse.getMobilePhone()).isEqualTo(createAccountRequest.getMobilePhone());
+    assertThat(accountDetailResponse.getMobilePhone())
+        .isEqualTo(createAccountRequest.getMobilePhone());
     assertThat(accountDetailResponse.getLanguage()).isEqualTo("EN");
     assertThat(accountDetailResponse.getRegion()).isEqualTo("GB");
-    assertThat(accountDetailResponse.getUserJourney()).isEqualTo(createAccountRequest.getUserJourney());
+    assertThat(accountDetailResponse.getUserJourney())
+        .isEqualTo(createAccountRequest.getUserJourney());
     assertThat(accountDetailResponse.getResearchContact()).isEqualTo("Yes");
+    assertThat(accountDetailResponse.getHasPassword()).isFalse();
   }
 }
