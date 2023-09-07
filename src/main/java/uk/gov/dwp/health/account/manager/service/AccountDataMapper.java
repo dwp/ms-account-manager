@@ -50,6 +50,7 @@ public class AccountDataMapper {
 
   public V4AccountDetails mapToV4AccountDetails(Claimant claimant) {
     var details = new V4AccountDetails();
+    details.setRef(claimant.getId());
     details.setDob(claimant.getDateOfBirth());
     details.setSurname(claimant.getSurname());
     details.setForename(claimant.getForename());
@@ -69,6 +70,9 @@ public class AccountDataMapper {
             ? V4AccountDetails.ResearchContactEnum.NO
             : V4AccountDetails.ResearchContactEnum.fromValue(claimant.getResearchContact().name()));
     details.setHasPassword(getHasPassword(claimant));
+    if (claimant.getTransferredToDwpApply() != null) {
+      details.setTransferredToDwpApply(claimant.getTransferredToDwpApply());
+    }
     return details;
   }
 

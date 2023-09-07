@@ -11,37 +11,38 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - FEATURE_ENCRYPTION_DATA_ENABLED=true
-      - FEATURE_ENCRYPTION_MESSAGING_ENABLED=true
-      - FEATURE_DATA_CHANGESTREAM_ENABLED=true
-      - FEATURE_CORRELATION_ENABLED=true
-      - SPRING_PROFILES_ACTIVE=dev
+      - APPLICATION_ACCOUNT_REGISTRATIONS_LIMIT=10
       - AWS_ACCESS_KEY_ID=my-key
-      - AWS_SECRET_ACCESS_KEY=its-a-secret
-      - ENCRYPTION_KMS_OVERRIDE=http://localstack:4566
-      - ENCRYPTION_DATA_KEY=awssecretkey
-      - TOTP_BASE_URL=http://wm-totp-authenticator:8080
-      - TOTP_NI_BASE_URL=http://wm-totp-authenticator:8080
-      - TOTP_VERIFY_PATH=/v1/totp/verify
-      - TOTP_GENERATE_PATH=/v1/totp/generate
-      - PIPCSGW_CHECK_CAN_APPLY_PATH=can-apply
-      - PIPCSGW_BASE_URL=http://wm-pipcs-gw:8080
+      - AWS_ENCRYPTION_KMS_KEY_CACHE=true
       - AWS_ENCRYPTION_KMS_OVERRIDE=http://localstack:4566
       - AWS_ENCRYPTION_MESSAGE_DATA_KEY_ID=alias/test_event_request_id
       - AWS_ENCRYPTION_MONGO_DATA_KEY_ID=alias/test_mongo_request_id
-      - AWS_ENCRYPTION_KMS_KEY_CACHE=true
+      - AWS_SECRET_ACCESS_KEY=its-a-secret
+      - ENCRYPTION_DATA_KEY=awssecretkey
+      - ENCRYPTION_KMS_OVERRIDE=http://localstack:4566
+      - FEATURE_DATA_CHANGESTREAM_ENABLED=true
+      - FEATURE_ENCRYPTION_DATA_ENABLED=true
+      - FEATURE_ENCRYPTION_MESSAGING_ENABLED=true
+      - FEATURE_MONGO_STABLE_API_ENABLED=true
+      - MONGOCK_CHANGE_LOGS_SCAN_PACKAGE=uk.gov.dwp.health.account.manager.migration
+      - PIPCSGW_BASE_URL=http://wm-pipcs-gw:8080
+      - PIPCSGW_CHECK_CAN_APPLY_PATH=can-apply
+      - SCHEDULE_RESET_REGISTRATIONS_COUNT=0-59/10 * * * * *
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/pip-apply-acc-mgr
+      - SPRING_PROFILES_ACTIVE=dev
+      - TOTP_BASE_URL=http://wm-totp-authenticator:8080
+      - TOTP_GENERATE_PATH=/v1/totp/generate
+      - TOTP_NI_BASE_URL=http://wm-totp-authenticator:8080
+      - TOTP_VERIFY_PATH=/v1/totp/verify
       - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_COLLECTION=account
-      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_ROUTING_KEY=pip.account.mgr.stream
       - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_DATABASE=pip-apply-acc-mgr
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_ROUTING_KEY=pip.account.mgr.stream
       - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_SKIP_DECRYPTION=true
+      - UK_GOV_DWP_HEALTH_INTEGRATION_AWS_REGION=eu-west-2
+      - UK_GOV_DWP_HEALTH_INTEGRATION_MESSAGING_TYPE=aws
       - UK_GOV_DWP_HEALTH_INTEGRATION_OUTBOUND_TOPIC_EXCHANGE=stream-topic
       - UK_GOV_DWP_HEALTH_INTEGRATION_SNS_ENDPOINT_OVERRIDE=http://localstack:4566
       - UK_GOV_DWP_HEALTH_INTEGRATION_SQS_ENDPOINT_OVERRIDE=http://localstack:4566
-      - UK_GOV_DWP_HEALTH_INTEGRATION_AWS_REGION=eu-west-2
-      - UK_GOV_DWP_HEALTH_INTEGRATION_MESSAGING_TYPE=aws
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/pip-apply-acc-mgr
-      - MONGOCK_CHANGE_LOGS_SCAN_PACKAGE=uk.gov.dwp.health.account.manager.migration
-      - FEATURE_MONGO_STABLE_API_ENABLED=true
     entrypoint:
       - java
       - -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009

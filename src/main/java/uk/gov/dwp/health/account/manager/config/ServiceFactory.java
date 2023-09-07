@@ -41,6 +41,8 @@ import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateEmailImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateNinoImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdatePasswordImpl;
 import uk.gov.dwp.health.account.manager.service.impl.CheckCanApplyService;
+import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateTransferStatusImpl;
+
 
 @Slf4j
 @Configuration
@@ -179,5 +181,11 @@ public class ServiceFactory {
     log.info("Creating accountUpdateClaimantDetailsV4 bean instance");
     return new AccountUpdateClaimantDetailsV4Impl(claimantService,
       dataMapper, accountUpdateEmail(), accountUpdateNino());
+  }
+
+  @Bean
+  public AccountUpdateTransferStatusImpl accountUpdateTransferStatus() {
+    log.info("Creating accountUpdateTransferStatus bean instance");
+    return new AccountUpdateTransferStatusImpl(claimantService);
   }
 }

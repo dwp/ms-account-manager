@@ -68,6 +68,9 @@ public class Claimant extends MongoChangeStreamIdentifier {
 
   @Transient private boolean enableCap;
 
+  @Field(value = "transferredToDwpApply")
+  private Boolean transferredToDwpApply;
+
   public void setPostcode(String postcode) {
     this.postcode = postcode.toUpperCase().trim();
   }

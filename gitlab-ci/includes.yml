@@ -75,7 +75,7 @@ include:
     file: 'ci-include-create-project-badges.yml'
   #create-schedules
   - project: 'dwp/engineering/pipeline-solutions/gitlab/fragments/schedule-creation'
-    ref: 2.5.1
+    ref: 2.6.0
     file: 'ci-include-schedule-creation.yml'
   #open-source
   - project: 'dwp/engineering/pipeline-solutions/gitlab/fragments/open-source'

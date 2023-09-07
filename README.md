@@ -51,6 +51,12 @@ Open another terminal window and run the following maven command to execute the 
 mvn clean verify -Papi-component-tests
 ```
 
+Alternatively if you run into any issues you can try the following:
+In a separate terminal window spin up the supporting stubbed services by running the bash script
+```zsh
+sh run-docker-local.sh
+```
+
 ## configuration elements
 
 All configuration is listed in `src/main/resources/application.yml` and follows the standard spring convention for yml file notation.  

@@ -78,3 +78,8 @@ aws:
     message-data-key-id: alias/test_event_request_id
     mongo-data-key-id: alias/test_mongo_request_id
     kms-key-cache: true
+
+schedule:
+  reset:
+    registrations:
+      count: 0-59/5 * * * * *

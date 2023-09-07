@@ -8,8 +8,16 @@ public class UrlBuilderUtil {
     return baseURI + "/v4/account/create/";
   }
 
+  public static String postAccountV5Url() {
+    return baseURI + "/v5/accounts";
+  }
+
   public static String patchClaimantDetailsUrl() {
     return baseURI + "/v4/account/claimantdetails/";
+  }
+
+  public static String patchClaimantTransferStatusUrl(String accountRef) {
+    return baseURI + "/v5/account/transfer/" + accountRef + "";
   }
 
   public static String getAccountByIDUrl(String accountRef) {
@@ -26,6 +34,10 @@ public class UrlBuilderUtil {
 
   public static String getMobileNumbersByClaimantIdUrl(String claimantIds) {
     return baseURI + "/v3/account/mobilephone/claimantid/" + claimantIds;
+  }
+
+  public static String getLimiterUrl() {
+    return baseURI + "/v5/limiter";
   }
 
   public static String postIdentifyUrl() {

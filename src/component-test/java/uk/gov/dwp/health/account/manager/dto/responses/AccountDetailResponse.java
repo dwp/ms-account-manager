@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AccountDetailResponse {
+    private String ref;
     private String email;
     private String nino;
     private String dob;
@@ -24,4 +25,5 @@ public class AccountDetailResponse {
     private String researchContact;
     @JsonProperty("has_password")
     private Boolean hasPassword;
+    private Boolean transferredToDwpApply;
 }
