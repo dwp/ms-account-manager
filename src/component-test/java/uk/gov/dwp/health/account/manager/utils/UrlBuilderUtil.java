@@ -16,8 +16,8 @@ public class UrlBuilderUtil {
     return baseURI + "/v4/account/claimantdetails/";
   }
 
-  public static String patchClaimantTransferStatusUrl(String accountRef) {
-    return baseURI + "/v5/account/transfer/" + accountRef + "";
+  public static String patchClaimantTransferStatusUrl() {
+    return baseURI + "/v5/account/transfer/";
   }
 
   public static String getAccountByIDUrl(String accountRef) {

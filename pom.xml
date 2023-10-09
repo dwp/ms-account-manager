@@ -10,7 +10,7 @@
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-account-manager</artifactId>
-  <version>5.1.0</version>
+  <version>5.3.0</version>
   <name>ms-account-manager</name>
   <description>Micro service provides account management &amp; authorization</description>
 
@@ -378,6 +378,7 @@
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v3/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v4/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v5/api/*</exclude>
+            <exclude>**uk/gov/dwp/health/account/manager/config/properties/*</exclude>
           </excludes>
         </configuration>
       </plugin>

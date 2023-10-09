@@ -35,10 +35,10 @@ public class V5AccountManagerApiImpl implements V5Api {
   }
 
   @Override
-  public ResponseEntity<Message> updateTransferStatus(String accountId) {
+  public ResponseEntity<Message> updateTransferStatus(String email) {
     return v5AccountManagerServices
         .getAccountUpdateTransferStatus()
-        .updateTransferStatus(accountId);
+        .updateTransferStatus(email);
   }
 
   @Override

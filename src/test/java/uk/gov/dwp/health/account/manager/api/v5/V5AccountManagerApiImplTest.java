@@ -45,10 +45,10 @@ class V5AccountManagerApiImplTest {
 
   @Test
   void when_updating_transfer_status() {
-    var accountId = TestFixtures.REF;
+    var email = TestFixtures.EMAIL;
     var service = mock(AccountUpdateTransferStatusImpl.class);
     when(v5AccountManagerServices.getAccountUpdateTransferStatus()).thenReturn(service);
-    v5AccountManagerApi.updateTransferStatus(accountId);
+    v5AccountManagerApi.updateTransferStatus(email);
     var captor = ArgumentCaptor.forClass(String.class);
     verify(service).updateTransferStatus(captor.capture());
     assertThat(captor.getValue()).isInstanceOf(String.class);

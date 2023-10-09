@@ -6,11 +6,11 @@ project:
   - project_id: 27361245
     component_name: ms-account-manager
 
-    version: 5-1-0
+    version: 5-2-0
 
     last_verified:
-      date: "2023-08-16"
-      name: "@fiona.evans"
+      date: "2023-09-21"
+      name: "@charlie.mccabe"
 
     tags:
       payments: false

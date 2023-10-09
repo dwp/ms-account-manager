@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import uk.gov.dwp.health.mongo.changestream.extension.MongoChangeStreamIdentifier;
@@ -37,6 +38,7 @@ public class Claimant extends MongoChangeStreamIdentifier {
   private String forename;
 
   @Field(value = "nino")
+  @Indexed
   private String nino;
 
   @Field(value = "date_of_birth")

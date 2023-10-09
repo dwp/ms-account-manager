@@ -1,7 +1,6 @@
 package uk.gov.dwp.health.account.manager.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,8 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static uk.gov.dwp.health.account.manager.constant.Strings.CORRELATION_ID;
 
 @Slf4j
 @Service

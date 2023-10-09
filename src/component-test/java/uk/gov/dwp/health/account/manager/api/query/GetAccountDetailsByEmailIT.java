@@ -17,13 +17,12 @@ import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.postAccount
 
 class GetAccountDetailsByEmailIT extends ApiTest {
   private CreateAccountRequest createAccountRequest;
-  private AccountCreationResponse accountCreationResponse;
+
   @BeforeEach
   public void testSetup() {
     MongoClientConnection.emptyMongoCollection();
     createAccountRequest = CreateAccountRequest.builder().build();
-    accountCreationResponse =
-        postRequest(postAccountUrl(), createAccountRequest).as(AccountCreationResponse.class);
+    postRequest(postAccountUrl(), createAccountRequest).as(AccountCreationResponse.class);
   }
 
   @Test
@@ -51,9 +50,9 @@ class GetAccountDetailsByEmailIT extends ApiTest {
 
   @Test
   void shouldReturn200StatusCodeAndAccountDetailsWhenRetrieveAccountByEmailAndTransferStatusIsProvided() {
-    String accountId = accountCreationResponse.getRef();
+    String email = createAccountRequest.getEmail();
 
-    Response patchResponse = patchRequest(patchClaimantTransferStatusUrl(accountId), accountId);
+    Response patchResponse = patchRequestWithHeader(patchClaimantTransferStatusUrl(), "x-email", email);
 
     assertThat(patchResponse.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED.value());
 

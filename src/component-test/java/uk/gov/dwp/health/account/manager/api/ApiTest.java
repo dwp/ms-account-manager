@@ -35,6 +35,10 @@ public class ApiTest {
     protected Response patchRequest(String path, Object bodyPayload) {
         return given().spec(requestSpec).body(bodyPayload).when().patch(path);
     }
+    protected Response patchRequestWithHeader(String path, String headerName, String headerValue) {
+        return given().spec(requestSpec).headers(headerName, headerValue).when().patch(path);
+    }
+
 
     protected Response getRequest(String path) {
         return given().spec(requestSpec).when().get(path);
