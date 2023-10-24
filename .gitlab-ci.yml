@@ -41,7 +41,7 @@ include:
 
 trivy-container:
   variables:
-    HIGH_SUPPRESSIONS: "CVE-2023-21930"
+    HIGH_SUPPRESSIONS: ""
 
 required-fragment-check:
   variables:

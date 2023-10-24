@@ -10,7 +10,7 @@
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-account-manager</artifactId>
-  <version>5.3.0</version>
+  <version>5.4.0</version>
   <name>ms-account-manager</name>
   <description>Micro service provides account management &amp; authorization</description>
 
@@ -378,6 +378,7 @@
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v3/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v4/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v5/api/*</exclude>
+            <exclude>**uk/gov/dwp/health/account/manager/openapi/v6/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/config/properties/*</exclude>
           </excludes>
         </configuration>
@@ -525,6 +526,31 @@
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
               <apiPackage>${client.base.package.name}.openapi.v5.api</apiPackage>
+              <generatorName>spring</generatorName>
+              <configOptions>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
+                <artifactVersion>${project.version}</artifactVersion>
+                <bigDecimalAsString>true</bigDecimalAsString>
+                <interfaceOnly>true</interfaceOnly>
+                <java8>true</java8>
+                <useBeanValidation>true</useBeanValidation>
+                <delegatePattern>true</delegatePattern>
+              </configOptions>
+            </configuration>
+          </execution>
+          <execution>
+            <id>account manager v6</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v6.yaml</inputSpec>
+              <language>spring</language>
+              <library>spring-boot</library>
+              <generateSupportingFiles>true</generateSupportingFiles>
+              <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
+              <apiPackage>${client.base.package.name}.openapi.v6.api</apiPackage>
               <generatorName>spring</generatorName>
               <configOptions>
                 <groupId>${project.groupId}</groupId>

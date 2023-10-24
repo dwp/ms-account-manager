@@ -1,7 +1,6 @@
 # ms-account-manager
 
-micro-service to enable claimants to authenticate with DWP. The main purposes of this service are to support online HTML application process
-for PIP2 questionnaire. 
+micro-service to enable claimants to authenticate with DWP. The main purposes of this service are to support online HTML application process for PIP2 questionnaire. 
 
 ## Dependency
 
