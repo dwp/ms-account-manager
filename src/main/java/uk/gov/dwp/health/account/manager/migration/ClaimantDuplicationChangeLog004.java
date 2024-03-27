@@ -2,7 +2,7 @@ package uk.gov.dwp.health.account.manager.migration;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v4.decorator.impl.MongockTemplate;
 import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;

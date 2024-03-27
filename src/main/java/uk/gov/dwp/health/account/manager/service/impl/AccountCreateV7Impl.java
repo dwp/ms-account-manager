@@ -11,7 +11,7 @@ import uk.gov.dwp.health.account.manager.entity.UserJourney;
 import uk.gov.dwp.health.account.manager.exception.AccountExistException;
 import uk.gov.dwp.health.account.manager.exception.DataValidationException;
 import uk.gov.dwp.health.account.manager.openapi.model.AccountReturn;
-import uk.gov.dwp.health.account.manager.openapi.model.V5NewAccountRequest;
+import uk.gov.dwp.health.account.manager.openapi.model.V7NewAccountRequest;
 import uk.gov.dwp.health.account.manager.service.ClaimantService;
 import uk.gov.dwp.health.account.manager.utils.InputValidator;
 import uk.gov.dwp.regex.PostCodeValidator;
@@ -21,25 +21,25 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class AccountCreateV5Impl {
+public class AccountCreateV7Impl {
 
   private final ClaimantService claimantService;
 
-  public ResponseEntity<AccountReturn> doCreateAccount(V5NewAccountRequest v5NewAccountRequest) {
-    log.info("About to process a v5 account creation");
+  public ResponseEntity<AccountReturn> doCreateAccount(V7NewAccountRequest v7NewAccountRequest) {
+    log.info("About to process a v7 account creation");
 
-    var dob = v5NewAccountRequest.getDob();
+    var dob = v7NewAccountRequest.getDob();
     isDobValid(dob);
-    var postcode = v5NewAccountRequest.getPostcode();
+    var postcode = v7NewAccountRequest.getPostcode();
     isPostcodeValid(postcode);
-    var formattedEmail = InputValidator.normaliseInputLower(v5NewAccountRequest.getEmail());
+    var formattedEmail = InputValidator.normaliseInputLower(v7NewAccountRequest.getEmail());
     isEmailInUse(formattedEmail);
-    var nino = InputValidator.normaliseInputUpper(v5NewAccountRequest.getNino());
+    var nino = InputValidator.normaliseInputUpper(v7NewAccountRequest.getNino());
     isNinoInUse(nino);
 
-    var accountReturn = createAccount(v5NewAccountRequest, formattedEmail);
+    var accountReturn = createAccount(v7NewAccountRequest, formattedEmail);
 
-    log.info("Processed a v5 account creation");
+    log.info("Processed a v7 account creation");
 
     return ResponseEntity.status(HttpStatus.CREATED).body(accountReturn);
   }
@@ -73,18 +73,18 @@ public class AccountCreateV5Impl {
   }
 
   private AccountReturn createAccount(
-      V5NewAccountRequest v5NewAccountRequest, String formattedEmail) {
-    log.info("About to create a v5 account");
-    Claimant claimant = toModel(v5NewAccountRequest);
+      V7NewAccountRequest v7NewAccountRequest, String formattedEmail) {
+    log.info("About to create a v7 account");
+    Claimant claimant = toModel(v7NewAccountRequest);
     claimantService.updateClaimant(claimant);
     var savedClaimant = claimantService.findByEmail(formattedEmail);
     var accountReturn = new AccountReturn();
     accountReturn.setRef(savedClaimant.getId());
-    log.info("Created a v5 account with claimant id of {}", savedClaimant.getId());
+    log.info("Created a v7 account with claimant id of {}", savedClaimant.getId());
     return accountReturn;
   }
 
-  private Claimant toModel(V5NewAccountRequest request) {
+  private Claimant toModel(V7NewAccountRequest request) {
     var claimant =
         Claimant.builder()
             .emailAddress(request.getEmail())

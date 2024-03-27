@@ -6,8 +6,8 @@ import org.springframework.web.servlet.HandlerMapping;
 import uk.gov.dwp.health.account.manager.exception.DataValidationException;
 import uk.gov.dwp.health.account.manager.utils.InputValidator;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 

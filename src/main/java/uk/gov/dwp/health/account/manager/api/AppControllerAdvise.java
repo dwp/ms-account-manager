@@ -23,7 +23,7 @@ import uk.gov.dwp.health.account.manager.exception.ExternalServiceException;
 import uk.gov.dwp.health.account.manager.exception.UnauthorizedException;
 import uk.gov.dwp.health.account.manager.openapi.model.FailureResponse;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 

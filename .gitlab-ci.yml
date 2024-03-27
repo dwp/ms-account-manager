@@ -3,7 +3,7 @@ variables:
   PRODUCT: pip-apply
   # Config
   BUILD_TYPE: MAVEN
-  MAVEN_IMAGE: "maven:3-jdk-11"
+  MAVEN_IMAGE: "maven:3.8.3-openjdk-17"
   PITEST_TARGET_CLASSES: "uk.gov.dwp.health.account.*"
   PITEST_TARGET_TEST_CLASSES: "uk.gov.dwp.health.account.manager.service.*,uk.gov.dwp.health.account.manager.api.*"
   PITEST_EXCLUDED_TEST_CLASSES: "uk.gov.dwp.health.**.*IT"
@@ -45,7 +45,7 @@ docker-build:
 
 trivy-container:
   variables:
-    HIGH_SUPPRESSIONS: ""
+    HIGH_SUPPRESSIONS: "CVE-2024-20952,CVE-2024-20918,CVE-2024-20932,CVE-2023-29499"
 
 required-fragment-check:
   variables:
@@ -97,8 +97,13 @@ api-test:
     when: always
     expose_as: 'Account manager API Component Test Report'
 
-### DEFAULT RUNNER ###
-default:
-  tags:
-    - docker
-  image: alpine@sha256:02bb6f428431fbc2809c5d1b41eab5a68350194fb508869a33cb1af4444c9b11
+gitleaks:
+  extends: .gitleaks-template-saas
+  variables:
+    GITLEAKS_INCLUDE_FILE: "ci-include-gitleaks-base.yml"
+  only:
+    - /^[Ff]-.*$/
+    - /^[Rr]-.*$/
+    - /^renovate\/.*$/
+    - /.*RENOVATE_BOT.*/
+

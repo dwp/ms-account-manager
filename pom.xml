@@ -5,33 +5,36 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.18</version>
+    <version>3.2.3</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-account-manager</artifactId>
-  <version>5.5.0</version>
+  <version>5.7.0</version>
   <name>ms-account-manager</name>
   <description>Micro service provides account management &amp; authorization</description>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
+    <required-java.version>17</required-java.version>
+    <required-maven.version>3.6.0</required-maven.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <client.base.package.name>uk.gov.dwp.health.account.manager</client.base.package.name>
-    <dwp.message-broker.version>2.12.0-cce5f733</dwp.message-broker.version>
-    <dwp-mongo-change-stream-starter.version>3.2.0-dd59aa6b</dwp-mongo-change-stream-starter.version>
+    <dwp.message-broker.version>3.4.0-bd00860c</dwp.message-broker.version>
+    <dwp-mongo-change-stream-starter.version>4.2.0-359f3f54</dwp-mongo-change-stream-starter.version>
     <dwp.postcode-validation.version>1.3.0-f0fc5e75</dwp.postcode-validation.version>
-    <dwp-meta-data-logger.version>2.0.1-b4ab9a22</dwp-meta-data-logger.version>
-    <swagger-annotations.version>1.6.12</swagger-annotations.version>
+    <dwp-meta-data-logger.version>2.0.0-f17eb705</dwp-meta-data-logger.version>
+    <swagger-annotations.version>2.2.20</swagger-annotations.version>
     <openapi-codegen-maven-plugin.version>6.6.0</openapi-codegen-maven-plugin.version>
-    <mongock.version>4.1.19</mongock.version>
+    <mongock.version>5.3.4</mongock.version>
     <jackson-nullable.version>0.2.6</jackson-nullable.version>
     <lidalia.version>1.2.0</lidalia.version>
-    <maven.compiler.version>3.10.1</maven.compiler.version>
-    <plugin.jacoco.version>0.8.8</plugin.jacoco.version>
+    <maven.compiler.version>3.11.0</maven.compiler.version>
+    <plugin.jacoco.version>0.8.10</plugin.jacoco.version>
     <plugin.owasp.version>7.4.4</plugin.owasp.version>
-    <plugin.spotbugs.version>4.0.0</plugin.spotbugs.version>
+    <plugin.spotbugs.version>4.7.3.5</plugin.spotbugs.version>
+    <spotbugs.version>4.7.3</spotbugs.version>
     <plugin.projectinfo.version>3.4.2</plugin.projectinfo.version>
     <plugin.surefire.version>2.22.2</plugin.surefire.version>
     <plugin.pmd.version>3.20.0</plugin.pmd.version>
@@ -41,20 +44,28 @@
     <plugin.maven.puppycrawl>9.3</plugin.maven.puppycrawl>
     <plugin.maven.checkstyle.version>3.2.1</plugin.maven.checkstyle.version>
     <plugin.rest-assured-extent-report-plugin.version>1.4.0</plugin.rest-assured-extent-report-plugin.version>
-    <flapdoodle.version>3.5.2</flapdoodle.version>
-    <guava.version>31.1-jre</guava.version>
+    <flapdoodle.version>4.6.2</flapdoodle.version>
+    <guava.version>33.0.0-jre</guava.version>
     <snakeyaml.version>2.0</snakeyaml.version>
     <restassured.version>5.4.0</restassured.version>
     <allure.version>2.25.0</allure.version>
     <java-faker.version>1.0.2</java-faker.version>
     <exec.maven.plugin.version>3.1.0</exec.maven.plugin.version>
     <swagger-parser.version>2.1.19</swagger-parser.version>
+    <bc-fips.version>1.0.2.3</bc-fips.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.github.cloudyrock.mongock</groupId>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.16.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.mongock</groupId>
         <artifactId>mongock-bom</artifactId>
         <version>${mongock.version}</version>
         <type>pom</type>
@@ -86,8 +97,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>uk.gov.dwp.health.logging</groupId>
-      <artifactId>dwp-meta-data-logger</artifactId>
+      <groupId>uk.gov.dwp.health.monitoring</groupId>
+      <artifactId>dwp-springboot-starter-meta-data-tracer</artifactId>
       <version>${dwp-meta-data-logger.version}</version>
     </dependency>
     <dependency>
@@ -107,17 +118,17 @@
       <artifactId>spring-boot-starter-data-mongodb</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.swagger</groupId>
+      <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-annotations</artifactId>
       <version>${swagger-annotations.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.github.cloudyrock.mongock</groupId>
-      <artifactId>mongock-spring-v5</artifactId>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongock-springboot-v3</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.github.cloudyrock.mongock</groupId>
-      <artifactId>mongodb-springdata-v3-driver</artifactId>
+      <groupId>io.mongock</groupId>
+      <artifactId>mongodb-springdata-v4-driver</artifactId>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -139,9 +150,10 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
+      <artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
       <groupId>de.flapdoodle.embed</groupId>
-      <artifactId>de.flapdoodle.embed.mongo</artifactId>
       <version>${flapdoodle.version}</version>
       <scope>test</scope>
     </dependency>
@@ -237,6 +249,16 @@
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bc-fips</artifactId>
+      <version>${bc-fips.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -379,6 +401,7 @@
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v4/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v5/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/openapi/v6/api/*</exclude>
+            <exclude>**uk/gov/dwp/health/account/manager/openapi/v7/api/*</exclude>
             <exclude>**uk/gov/dwp/health/account/manager/config/properties/*</exclude>
           </excludes>
         </configuration>
@@ -419,7 +442,6 @@
             </goals>
             <configuration>
               <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v1.yaml</inputSpec>
-              <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
@@ -436,6 +458,8 @@
                 <useBeanValidation>true</useBeanValidation>
                 <booleanGetterPrefix>is</booleanGetterPrefix>
                 <delegatePattern>true</delegatePattern>
+                <useJakartaEe>true</useJakartaEe>
+                <annotationLibrary>swagger2</annotationLibrary>
               </configOptions>
             </configuration>
           </execution>
@@ -446,7 +470,6 @@
             </goals>
             <configuration>
               <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v2.yaml</inputSpec>
-              <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
@@ -461,6 +484,8 @@
                 <java8>true</java8>
                 <useBeanValidation>true</useBeanValidation>
                 <delegatePattern>true</delegatePattern>
+                <useJakartaEe>true</useJakartaEe>
+                <annotationLibrary>swagger2</annotationLibrary>
               </configOptions>
             </configuration>
           </execution>
@@ -471,7 +496,6 @@
             </goals>
             <configuration>
               <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v3.yaml</inputSpec>
-              <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
@@ -486,6 +510,8 @@
                 <java8>true</java8>
                 <useBeanValidation>true</useBeanValidation>
                 <delegatePattern>true</delegatePattern>
+                <useJakartaEe>true</useJakartaEe>
+                <annotationLibrary>swagger2</annotationLibrary>
               </configOptions>
             </configuration>
           </execution>
@@ -496,7 +522,6 @@
             </goals>
             <configuration>
               <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v4.yaml</inputSpec>
-              <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
@@ -511,6 +536,8 @@
                 <java8>true</java8>
                 <useBeanValidation>true</useBeanValidation>
                 <delegatePattern>true</delegatePattern>
+                <useJakartaEe>true</useJakartaEe>
+                <annotationLibrary>swagger2</annotationLibrary>
               </configOptions>
             </configuration>
           </execution>
@@ -521,7 +548,6 @@
             </goals>
             <configuration>
               <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v5.yaml</inputSpec>
-              <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
@@ -536,6 +562,8 @@
                 <java8>true</java8>
                 <useBeanValidation>true</useBeanValidation>
                 <delegatePattern>true</delegatePattern>
+                <useJakartaEe>true</useJakartaEe>
+                <annotationLibrary>swagger2</annotationLibrary>
               </configOptions>
             </configuration>
           </execution>
@@ -546,7 +574,6 @@
             </goals>
             <configuration>
               <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v6.yaml</inputSpec>
-              <language>spring</language>
               <library>spring-boot</library>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
@@ -561,6 +588,34 @@
                 <java8>true</java8>
                 <useBeanValidation>true</useBeanValidation>
                 <delegatePattern>true</delegatePattern>
+                <useJakartaEe>true</useJakartaEe>
+                <annotationLibrary>swagger2</annotationLibrary>
+              </configOptions>
+            </configuration>
+          </execution>
+          <execution>
+            <id>account manager v7</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/schemas/api-spec/ms-account-manager/openapi-spec-v7.yaml</inputSpec>
+              <library>spring-boot</library>
+              <generateSupportingFiles>true</generateSupportingFiles>
+              <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
+              <apiPackage>${client.base.package.name}.openapi.v7.api</apiPackage>
+              <generatorName>spring</generatorName>
+              <configOptions>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
+                <artifactVersion>${project.version}</artifactVersion>
+                <bigDecimalAsString>true</bigDecimalAsString>
+                <interfaceOnly>true</interfaceOnly>
+                <java8>true</java8>
+                <useBeanValidation>true</useBeanValidation>
+                <delegatePattern>true</delegatePattern>
+                <useJakartaEe>true</useJakartaEe>
+                <annotationLibrary>swagger2</annotationLibrary>
               </configOptions>
             </configuration>
           </execution>
@@ -600,11 +655,11 @@
           <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs</artifactId>
-            <version>${plugin.spotbugs.version}</version>
+            <version>${spotbugs.version}</version>
           </dependency>
         </dependencies>
         <configuration>
-          <includeFilterFile>spotbugs/filter.xml</includeFilterFile>
+          <excludeFilterFile>spotbugs/filter.xml</excludeFilterFile>
         </configuration>
       </plugin>
     </plugins>

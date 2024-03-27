@@ -1,11 +1,14 @@
 package uk.gov.dwp.health.account.manager.migration;
 
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v4.decorator.impl.MongockTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.index.CompoundIndexDefinition;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.data.mongodb.core.index.IndexOperations;
@@ -21,14 +24,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @TestMethodOrder(value = OrderAnnotation.class)
+@ExtendWith(MockitoExtension.class)
 class ClaimantDuplicationChangeLog003Test {
 
   private static ClaimantDuplicationChangeLog003 claimantIndexChangeLog;
+  @Mock
   private MongockTemplate mongockTemplate;
 
   @BeforeEach
   void beforeEach() {
-    mongockTemplate = mock(MongockTemplate.class);
     claimantIndexChangeLog = new ClaimantDuplicationChangeLog003();
   }
 

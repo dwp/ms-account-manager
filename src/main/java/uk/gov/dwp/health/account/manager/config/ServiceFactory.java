@@ -33,10 +33,12 @@ import uk.gov.dwp.health.account.manager.service.impl.AccountGetClaimantDetailsI
 import uk.gov.dwp.health.account.manager.service.impl.AccountGetClaimantDetailsV2Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountGetClaimantDetailsV3Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountGetClaimantDetailsV4Impl;
+import uk.gov.dwp.health.account.manager.service.impl.AccountGetClaimantDetailsV7Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountGetClaimantPhoneNumbersV3Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountIdentificationImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateClaimantDetailsImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateClaimantDetailsV4Impl;
+import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateClaimantDetailsV7Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateEmailImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateNinoImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdatePasswordImpl;
@@ -146,6 +148,12 @@ public class ServiceFactory {
   }
 
   @Bean
+  public AccountGetClaimantDetailsV7Impl accountGetClaimantDetailsV7() {
+    log.info("Creating AccountGetClaimantDetails v7 bean instance");
+    return new AccountGetClaimantDetailsV7Impl(claimantRepository);
+  }
+
+  @Bean
   public AccountCheckCanApplyV5Impl accountCheckCanApplyV5() {
     log.info("Creating AccountCheckCanApply v5 bean instance");
     return new AccountCheckCanApplyV5Impl(checkCanApplyService);
@@ -180,6 +188,13 @@ public class ServiceFactory {
   public AccountUpdateClaimantDetailsV4Impl accountUpdateClaimantDetailsV4() {
     log.info("Creating accountUpdateClaimantDetailsV4 bean instance");
     return new AccountUpdateClaimantDetailsV4Impl(claimantService,
+      dataMapper, accountUpdateEmail(), accountUpdateNino());
+  }
+
+  @Bean
+  public AccountUpdateClaimantDetailsV7Impl accountUpdateClaimantDetailsV7() {
+    log.info("Creating accountUpdateClaimantDetailsV7 bean instance");
+    return new AccountUpdateClaimantDetailsV7Impl(claimantService,
       dataMapper, accountUpdateEmail(), accountUpdateNino());
   }
 

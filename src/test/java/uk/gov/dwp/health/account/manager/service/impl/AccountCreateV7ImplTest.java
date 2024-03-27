@@ -13,7 +13,7 @@ import support.TestFixtures;
 import uk.gov.dwp.health.account.manager.entity.Claimant;
 import uk.gov.dwp.health.account.manager.exception.AccountExistException;
 import uk.gov.dwp.health.account.manager.exception.DataValidationException;
-import uk.gov.dwp.health.account.manager.openapi.model.V5NewAccountRequest;
+import uk.gov.dwp.health.account.manager.openapi.model.V7NewAccountRequest;
 import uk.gov.dwp.health.account.manager.service.ClaimantService;
 
 import java.time.LocalDate;
@@ -26,25 +26,27 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.dwp.health.account.manager.openapi.model.V5NewAccountRequest.LanguageEnum.EN;
-import static uk.gov.dwp.health.account.manager.openapi.model.V5NewAccountRequest.UserJourneyEnum.STRATEGIC;
-import static uk.gov.dwp.health.account.manager.openapi.model.V5NewAccountRequest.UserJourneyEnum.TACTICAL;
+import static uk.gov.dwp.health.account.manager.openapi.model.V7NewAccountRequest.LanguageEnum.EN;
+import static uk.gov.dwp.health.account.manager.openapi.model.V7NewAccountRequest.UserJourneyEnum.STRATEGIC;
+import static uk.gov.dwp.health.account.manager.openapi.model.V7NewAccountRequest.UserJourneyEnum.TACTICAL;
 
 @ExtendWith(MockitoExtension.class)
-class AccountCreateV5ImplTest {
+class AccountCreateV7ImplTest {
 
-  @InjectMocks private AccountCreateV5Impl accountCreateV5Impl;
-  @Mock private ClaimantService claimantService;
-  @Captor private ArgumentCaptor<String> strCaptor;
+  @InjectMocks
+  private AccountCreateV7Impl accountCreateV6Impl;
+  @Mock
+  private ClaimantService claimantService;
+  @Captor
+  private ArgumentCaptor<String> strCaptor;
   @Captor private ArgumentCaptor<Claimant> claimantCaptor;
 
   @Test
   @DisplayName("test throws accountExistException on nino")
   void testThrowsAccountExistExceptionOnNino() {
-    var request = mock(V5NewAccountRequest.class);
+    var request = mock(V7NewAccountRequest.class);
     when(request.getDob()).thenReturn(TestFixtures.DOB);
     when(request.getPostcode()).thenReturn(TestFixtures.POSTCODE);
     when(request.getEmail()).thenReturn(TestFixtures.EMAIL);
@@ -52,7 +54,7 @@ class AccountCreateV5ImplTest {
     when(request.getNino()).thenReturn(TestFixtures.NINO);
     when(claimantService.findByNino(anyString())).thenReturn(List.of(new Claimant()));
 
-    assertThatThrownBy(() -> accountCreateV5Impl.doCreateAccount(request))
+    assertThatThrownBy(() -> accountCreateV6Impl.doCreateAccount(request))
         .isInstanceOf(AccountExistException.class)
         .hasMessage("NINO");
 
@@ -65,11 +67,11 @@ class AccountCreateV5ImplTest {
   @Test
   @DisplayName("test throws dataValidationException on invalid postcode")
   void testThrowsDataValidationExceptionOnInvalidPostcode() {
-    var request = mock(V5NewAccountRequest.class);
+    var request = mock(V7NewAccountRequest.class);
     when(request.getDob()).thenReturn(TestFixtures.DOB);
     when(request.getPostcode()).thenReturn("invalid-postcode");
 
-    assertThatThrownBy(() -> accountCreateV5Impl.doCreateAccount(request))
+    assertThatThrownBy(() -> accountCreateV6Impl.doCreateAccount(request))
         .isInstanceOf(DataValidationException.class)
         .hasMessage("Postcode is invalid");
   }
@@ -77,9 +79,9 @@ class AccountCreateV5ImplTest {
   @Test
   @DisplayName("test throws dataValidationException on future dob")
   void testThrowsDataValidationExceptionOnFutureDob() {
-    var request = mock(V5NewAccountRequest.class);
+    var request = mock(V7NewAccountRequest.class);
     when(request.getDob()).thenReturn(LocalDate.now().plusDays(1));
-    assertThatThrownBy(() -> accountCreateV5Impl.doCreateAccount(request))
+    assertThatThrownBy(() -> accountCreateV6Impl.doCreateAccount(request))
         .isInstanceOf(DataValidationException.class)
         .hasMessage("Fail validation DOB is a future date");
   }
@@ -87,13 +89,13 @@ class AccountCreateV5ImplTest {
   @Test
   @DisplayName("test throws accountExistException")
   void testThrowsAccountExistException() {
-    var request = mock(V5NewAccountRequest.class);
+    var request = mock(V7NewAccountRequest.class);
     when(request.getDob()).thenReturn(TestFixtures.DOB);
     when(request.getPostcode()).thenReturn(TestFixtures.POSTCODE);
     when(request.getEmail()).thenReturn(TestFixtures.EMAIL);
     when(claimantService.findByEmail(anyString())).thenReturn(new Claimant());
 
-    assertThatThrownBy(() -> accountCreateV5Impl.doCreateAccount(request))
+    assertThatThrownBy(() -> accountCreateV6Impl.doCreateAccount(request))
         .isInstanceOf(AccountExistException.class)
         .hasMessage("EMAIL");
     verify(claimantService).findByEmail(strCaptor.capture());
@@ -103,7 +105,7 @@ class AccountCreateV5ImplTest {
   @Test
   @DisplayName("test tactical returns 201 and new account ref")
   void testTacticalReturns201AndNewAccountRef() {
-    var request = new V5NewAccountRequest();
+    var request = new V7NewAccountRequest();
     request.setPostcode(TestFixtures.POSTCODE);
     request.setMobilePhone(TestFixtures.MOBILE);
     request.setEmail(TestFixtures.EMAIL);
@@ -118,7 +120,7 @@ class AccountCreateV5ImplTest {
     when(claimantService.findByEmail(anyString())).thenReturn(null).thenReturn(savedClaimant);
     when(claimantService.findByNino(anyString())).thenReturn(Collections.emptyList());
 
-    var actual = accountCreateV5Impl.doCreateAccount(request);
+    var actual = accountCreateV6Impl.doCreateAccount(request);
 
     verify(claimantService).updateClaimant(claimantCaptor.capture());
     assertAll(
@@ -144,7 +146,7 @@ class AccountCreateV5ImplTest {
   @Test
   @DisplayName("test strategic returns 201 and new account ref")
   void testStrategicReturns201AndNewAccountRef() {
-    var request = new V5NewAccountRequest();
+    var request = new V7NewAccountRequest();
     request.setPostcode(TestFixtures.POSTCODE);
     request.setMobilePhone(TestFixtures.MOBILE);
     request.setEmail(TestFixtures.EMAIL);
@@ -159,7 +161,7 @@ class AccountCreateV5ImplTest {
     when(claimantService.findByEmail(anyString())).thenReturn(null).thenReturn(savedClaimant);
     when(claimantService.findByNino(anyString())).thenReturn(Collections.emptyList());
 
-    var actual = accountCreateV5Impl.doCreateAccount(request);
+    var actual = accountCreateV6Impl.doCreateAccount(request);
 
     verify(claimantService).updateClaimant(claimantCaptor.capture());
     assertAll(

@@ -3,12 +3,10 @@ package uk.gov.dwp.health.account.manager.api.v5;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import uk.gov.dwp.health.account.manager.openapi.model.AccountReturn;
 import uk.gov.dwp.health.account.manager.openapi.model.CheckClaimResponse;
-import uk.gov.dwp.health.account.manager.openapi.model.RegistrationsLimiterDto;
 import uk.gov.dwp.health.account.manager.openapi.model.V5NewAccountRequest;
 import uk.gov.dwp.health.account.manager.openapi.model.Message;
 import uk.gov.dwp.health.account.manager.openapi.v5.api.V5Api;
@@ -46,11 +44,4 @@ public class V5AccountManagerApiImpl implements V5Api {
     return v5AccountManagerServices.getAccountCreateV5().doCreateAccount(v5NewAccountRequest);
   }
 
-  @Override
-  public ResponseEntity<RegistrationsLimiterDto> getLimiter() {
-    var registrationsLimiterDto =
-        v5AccountManagerServices.getRegistrationsLimiterGetter().getRegistrationsLimiter();
-
-    return ResponseEntity.status(HttpStatus.OK).body(registrationsLimiterDto);
-  }
 }

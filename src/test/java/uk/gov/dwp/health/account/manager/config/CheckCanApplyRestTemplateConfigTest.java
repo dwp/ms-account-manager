@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.dwp.health.account.manager.http.CheckCanApplyHttpRespStatusHandler;
-import uk.gov.dwp.health.logging.OutgoingInterceptor;
+import uk.gov.dwp.health.monitoring.interceptor.OutgoingInterceptor;
 
 import java.util.List;
 

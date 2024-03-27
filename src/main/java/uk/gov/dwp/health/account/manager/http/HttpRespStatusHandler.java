@@ -23,18 +23,18 @@ public class HttpRespStatusHandler implements ResponseErrorHandler {
 
   @Override
   public boolean hasError(ClientHttpResponse response) throws IOException {
-    return response.getStatusCode().series() == CLIENT_ERROR
-        || response.getStatusCode().series() == SERVER_ERROR;
+    return response.getStatusCode().is4xxClientError()
+        || response.getStatusCode().is5xxServerError();
   }
 
   @Override
   public void handleError(ClientHttpResponse response) throws IOException {
-    if (response.getStatusCode().series() == SERVER_ERROR) {
+    if (response.getStatusCode().is5xxServerError()) {
       final String msg =
           String.format("Server error - Response code [%s]", response.getStatusCode().value());
       log.error(msg);
       throw new ExternalServiceException(msg);
-    } else if (response.getStatusCode().series() == CLIENT_ERROR) {
+    } else if (response.getStatusCode().is4xxClientError()) {
       if (response.getStatusCode() == UNAUTHORIZED) {
         final String msg = "Unauthorized";
         log.info(msg);

@@ -9,9 +9,6 @@ import uk.gov.dwp.health.account.manager.exception.CanApplyCheckFailedException;
 
 import java.io.IOException;
 
-import static org.springframework.http.HttpStatus.Series.CLIENT_ERROR;
-import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
-
 @Slf4j
 @NoArgsConstructor
 @Component(value = "checkCanApplyHttpRespStatusHandler")
@@ -19,8 +16,8 @@ public class CheckCanApplyHttpRespStatusHandler implements ResponseErrorHandler 
 
   @Override
   public boolean hasError(ClientHttpResponse response) throws IOException {
-    return response.getStatusCode().series() == CLIENT_ERROR
-        || response.getStatusCode().series() == SERVER_ERROR;
+    return response.getStatusCode().is4xxClientError()
+        || response.getStatusCode().is5xxServerError();
   }
 
   @Override

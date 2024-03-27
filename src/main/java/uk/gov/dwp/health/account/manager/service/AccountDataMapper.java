@@ -5,6 +5,7 @@ import uk.gov.dwp.health.account.manager.entity.Claimant;
 import uk.gov.dwp.health.account.manager.openapi.model.AccountDetails;
 import uk.gov.dwp.health.account.manager.openapi.model.V3AccountDetails;
 import uk.gov.dwp.health.account.manager.openapi.model.V4AccountDetails;
+import uk.gov.dwp.health.account.manager.openapi.model.V7AccountDetails;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -69,6 +70,30 @@ public class AccountDataMapper {
         claimant.getResearchContact() == null
             ? V4AccountDetails.ResearchContactEnum.NO
             : V4AccountDetails.ResearchContactEnum.fromValue(claimant.getResearchContact().name()));
+    details.setHasPassword(getHasPassword(claimant));
+    if (claimant.getTransferredToDwpApply() != null) {
+      details.setTransferredToDwpApply(claimant.getTransferredToDwpApply());
+    }
+    return details;
+  }
+
+  public V7AccountDetails mapToV7AccountDetails(Claimant claimant) {
+    var details = new V7AccountDetails();
+    details.setRef(claimant.getId());
+    details.setDob(claimant.getDateOfBirth());
+    details.setSurname(claimant.getSurname());
+    details.setForename(claimant.getForename());
+    details.setPostcode(claimant.getPostcode());
+    details.setEmail(claimant.getEmailAddress());
+    details.setLanguage(V7AccountDetails.LanguageEnum.fromValue(claimant.getLanguage()));
+    details.setMobilePhone(claimant.getMobileNumber());
+    details.setNino(claimant.getNino());
+    details.setRegion(
+        claimant.getRegion() == null
+            ? V7AccountDetails.RegionEnum.GB
+            : V7AccountDetails.RegionEnum.valueOf(claimant.getRegion().name()));
+    details.setUserJourney(
+        V7AccountDetails.UserJourneyEnum.fromValue(claimant.getUserJourney().name()));
     details.setHasPassword(getHasPassword(claimant));
     if (claimant.getTransferredToDwpApply() != null) {
       details.setTransferredToDwpApply(claimant.getTransferredToDwpApply());

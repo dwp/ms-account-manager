@@ -1,4 +1,4 @@
-package uk.gov.dwp.health.account.manager.api.create.v5;
+package uk.gov.dwp.health.account.manager.api.create.v7;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +12,7 @@ import uk.gov.dwp.health.account.manager.dto.requests.create.CreateAccountV5Requ
 import uk.gov.dwp.health.account.manager.dto.responses.AccountCreationResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.postAccountUrl;
-import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.postAccountV5Url;
+import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.*;
 
 class PostAccountIT extends ApiTest {
 
@@ -29,7 +28,7 @@ class PostAccountIT extends ApiTest {
   void when_new_account_request_then_create_account() {
     var createAccountRequest = CreateAccountV5Request.builder().build();
 
-    var response = postRequest(postAccountV5Url(), createAccountRequest);
+    var response = postRequest(postAccountV7Url(), createAccountRequest);
 
     verify201Response(response);
   }

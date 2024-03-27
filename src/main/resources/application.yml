@@ -31,7 +31,7 @@ management:
       enabled: false
 
 mongock:
-  change-logs-scan-package: uk.gov.dwp.health.account.manager.migration
+  migration-scan-package: uk.gov.dwp.health.account.manager.migration
 
 feature:
   mongo:

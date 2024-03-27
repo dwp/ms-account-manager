@@ -42,7 +42,7 @@ class AccountUpdatePasswordImplTest {
     var request = new PasswordSetResetRequest();
     request.setRef(TestFixtures.REF);
     given(claimantService.findByRef(anyString())).willReturn(mock(Claimant.class));
-    given(totpVerifyService.verify(any(Claimant.class), any(Totp.class))).willReturn(false);
+    given(totpVerifyService.verify(any(Claimant.class), any(Totp[].class))).willReturn(false);
     var actual = cut.updatePassword(request);
 
     verify(claimantService).findByRef(strCaptor.capture());

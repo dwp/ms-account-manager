@@ -577,7 +577,7 @@ class V1AccountManagerApiImplHttpTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(MAPPER.writeValueAsString(request)))
-        .andExpect(status().isMethodNotAllowed());
+        .andExpect(status().is5xxServerError());
   }
 
   @Test

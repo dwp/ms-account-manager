@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import uk.gov.dwp.health.account.manager.openapi.model.AccountReturn;
 import uk.gov.dwp.health.account.manager.openapi.model.RegistrationsLimiterDto;
 import uk.gov.dwp.health.account.manager.openapi.model.V5NewAccountRequest;
-import uk.gov.dwp.health.account.manager.service.RegistrationsLimiterGetter;
 import support.TestFixtures;
 import uk.gov.dwp.health.account.manager.service.V5AccountManagerServices;
 import uk.gov.dwp.health.account.manager.service.impl.AccountCheckCanApplyV5Impl;
@@ -72,18 +71,4 @@ class V5AccountManagerApiImplTest {
     assertThat(actualResponseEntity.getBody()).isEqualTo(accountReturn);
   }
 
-  @Test
-  void when_getting_registrations_limiter() {
-    var registrationsLimiterGetter = mock(RegistrationsLimiterGetter.class);
-    when(v5AccountManagerServices.getRegistrationsLimiterGetter())
-        .thenReturn(registrationsLimiterGetter);
-
-    var registrationsLimiterDto = new RegistrationsLimiterDto();
-    when(registrationsLimiterGetter.getRegistrationsLimiter()).thenReturn(registrationsLimiterDto);
-
-    ResponseEntity<RegistrationsLimiterDto> responseEntity = v5AccountManagerApi.getLimiter();
-
-    assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(responseEntity.getBody()).isEqualTo(registrationsLimiterDto);
-  }
 }

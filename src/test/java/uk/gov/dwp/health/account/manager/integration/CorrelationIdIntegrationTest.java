@@ -1,7 +1,5 @@
 package uk.gov.dwp.health.account.manager.integration;
 
-import com.github.cloudyrock.mongock.MongockConnectionDriver;
-import com.github.cloudyrock.spring.v5.MongockSpring5;
 import com.mongodb.client.MongoClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.dwp.health.integration.message.aws.AWSFlowConfiguration;
@@ -28,8 +27,6 @@ class CorrelationIdIntegrationTest {
 
   @MockBean MongoClient mongoClient;
   @Autowired RestTemplate restTemplate;
-  @MockBean MongockConnectionDriver mongockConnectionDriver;
-  @MockBean MongockSpring5.Builder mongoBuilder;
   @MockBean AWSFlowConfiguration awsFlowConfiguration;
 
   @Test
@@ -42,6 +39,6 @@ class CorrelationIdIntegrationTest {
   @Test
   @DisplayName("test httpConfig initialized")
   void testHttpConfigInitialized() {
-//    assertThat(httpConfig).isNotNull();
+    //assertThat(httpConfig).isNotNull();
   }
 }

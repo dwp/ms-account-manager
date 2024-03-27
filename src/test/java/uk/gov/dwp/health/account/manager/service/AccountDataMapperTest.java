@@ -12,6 +12,7 @@ import uk.gov.dwp.health.account.manager.entity.UserJourney;
 import uk.gov.dwp.health.account.manager.openapi.model.AccountDetails;
 import uk.gov.dwp.health.account.manager.openapi.model.V3AccountDetails;
 import uk.gov.dwp.health.account.manager.openapi.model.V4AccountDetails;
+import uk.gov.dwp.health.account.manager.openapi.model.V7AccountDetails;
 
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -63,6 +64,30 @@ class AccountDataMapperTest {
           assertEquals(TestFixtures.MOBILE, actual.getMobilePhone());
           assertEquals("NI", actual.getRegion().name());
           assertEquals("TACTICAL", actual.getUserJourney().toString());
+        });
+  }
+
+  @Test
+  @DisplayName("test map claimant to V5AccountDetails")
+  void testMapClaimantToV5AccountDetails() {
+    var claimant = claimantFixture();
+    claimant.setUserJourney(UserJourney.PIP2_INVITED);
+    var actual = accountDataMapper.mapToV7AccountDetails(claimant);
+    assertAll(
+        "assert v7 account details",
+        () -> {
+          assertEquals(TestFixtures.EMAIL, actual.getEmail());
+          assertEquals(TestFixtures.DOB, actual.getDob());
+          assertEquals(TestFixtures.SURNAME, actual.getSurname());
+          assertEquals(TestFixtures.FORENAME, actual.getForename());
+          assertEquals(TestFixtures.NINO, actual.getNino());
+          assertEquals(V7AccountDetails.LanguageEnum.EN, actual.getLanguage());
+          assertEquals(TestFixtures.MOBILE, actual.getMobilePhone());
+          assertEquals("NI", actual.getRegion().name());
+          assertEquals("PIP2_INVITED", actual.getUserJourney().toString());
+          assertEquals(Boolean.FALSE, actual.getHasPassword());
+          assertNull(actual.getTransferredToDwpApply());
+          assertEquals(TestFixtures.REF, actual.getRef());
         });
   }
 

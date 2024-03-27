@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/java:11@sha256:629d4fdc17eec821242d45497abcb88cc0442c47fd5748baa79d88dde7da3e2d
+FROM gcr.io/distroless/java17@sha256:2f01c2ff0c0db866ed73085cf1bb5437dd162b48526f89c1baa21dd77ebb5e6d
 COPY target/ms-account-manager-*.jar /ms-account-manager.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000", "-jar", "/account-manager.jar"]
