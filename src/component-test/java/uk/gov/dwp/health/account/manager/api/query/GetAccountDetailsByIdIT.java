@@ -5,14 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import uk.gov.dwp.health.account.manager.api.ApiTest;
-import uk.gov.dwp.health.account.manager.dto.responses.AccountDetailResponse;
 import uk.gov.dwp.health.account.manager.config.MongoClientConnection;
 import uk.gov.dwp.health.account.manager.dto.requests.create.CreateAccountRequest;
 import uk.gov.dwp.health.account.manager.dto.responses.AccountCreationResponse;
+import uk.gov.dwp.health.account.manager.dto.responses.AccountDetailResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.getAccountByIDUrl;
-import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.postAccountUrl;
+import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.getAccountByIDV7Url;
+import static uk.gov.dwp.health.account.manager.utils.UrlBuilderUtil.postAccountV7Url;
 
 class GetAccountDetailsByIdIT extends ApiTest {
   private CreateAccountRequest createAccountRequest;
@@ -21,14 +21,16 @@ class GetAccountDetailsByIdIT extends ApiTest {
   @BeforeEach
   public void testSetup() {
     MongoClientConnection.emptyMongoCollection();
-    createAccountRequest = CreateAccountRequest.builder().build();
+    createAccountRequest = CreateAccountRequest.builder()
+        .userJourney("PIP2_INVITED")
+        .build();
     accountCreationResponse =
-        postRequest(postAccountUrl(), createAccountRequest).as(AccountCreationResponse.class);
+        postRequest(postAccountV7Url(), createAccountRequest).as(AccountCreationResponse.class);
   }
 
   @Test
   void shouldReturn200StatusCodeAndAccountDetailsWhenRetrieveAccountById() {
-    Response response = getRequest(getAccountByIDUrl(accountCreationResponse.getRef()));
+    Response response = getRequest(getAccountByIDV7Url(accountCreationResponse.getRef()));
     AccountDetailResponse accountDetailResponse = response.as(AccountDetailResponse[].class)[0];
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
@@ -44,7 +46,7 @@ class GetAccountDetailsByIdIT extends ApiTest {
     assertThat(accountDetailResponse.getRegion()).isEqualTo("GB");
     assertThat(accountDetailResponse.getUserJourney())
         .isEqualTo(createAccountRequest.getUserJourney());
-    assertThat(accountDetailResponse.getResearchContact()).isEqualTo("Yes");
+    assertThat(accountDetailResponse.getResearchContact()).isNull();
     assertThat(accountDetailResponse.getHasPassword()).isFalse();
   }
 }

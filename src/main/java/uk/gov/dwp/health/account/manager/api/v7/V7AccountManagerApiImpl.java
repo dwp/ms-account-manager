@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import uk.gov.dwp.health.account.manager.openapi.model.AccountReturn;
-import uk.gov.dwp.health.account.manager.openapi.model.V4AccountDetails;
-import uk.gov.dwp.health.account.manager.openapi.model.V4NewAccountRequest;
 import uk.gov.dwp.health.account.manager.openapi.model.V4UpdateClaimantDetailsRequest;
 import uk.gov.dwp.health.account.manager.openapi.model.V7AccountDetails;
 import uk.gov.dwp.health.account.manager.openapi.model.V7NewAccountRequest;

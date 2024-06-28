@@ -2,7 +2,7 @@ package uk.gov.dwp.health.account.manager.utils;
 
 import java.util.Locale;
 
-public class InputValidator {
+public final class InputValidator {
 
   private static final int NINO_LENGTH = 9;
 

@@ -1,0 +1,18 @@
+variables:
+  # Repo
+  REPO_OWNER: "Team Goldcrest"
+  REPO_PATTERN: "V3 CI"
+  # Product
+  PRODUCT: pip-apply
+  # Config
+  BUILD_TYPE: MAVEN
+  MAVEN_IMAGE: "maven:3.9.6-eclipse-temurin-17-focal"
+  PITEST_TARGET_CLASSES: "uk.gov.dwp.health.account.*"
+  PITEST_TARGET_TEST_CLASSES: "uk.gov.dwp.health.account.manager.service.*,uk.gov.dwp.health.account.manager.api.*"
+  PITEST_EXCLUDED_TEST_CLASSES: "uk.gov.dwp.health.**.*IT"
+  MVN_OPTS: "-DLOG_LEVEL=INFO -DtargetClasses=${PITEST_TARGET_CLASSES} -DtargetTests=${PITEST_TARGET_TEST_CLASSES} -DexcludedTestClasses=${PITEST_EXCLUDED_TEST_CLASSES}"
+  MVN_CLI_OPTS: "--batch-mode"
+  PIP_APPLY_MOCKS_NAME: pip-apply-mocks
+  MOCK_IMAGE: "develop"
+  CI_PROJECT_NAME: ms-account-manager
+  GITHUB_REPO_NAME: ms-account-manager

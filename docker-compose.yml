@@ -7,9 +7,9 @@ services:
 
   ms-account-manager:
     image: '${GITLAB_IMAGE}'
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     environment:
       - APPLICATION_ACCOUNT_REGISTRATIONS_LIMIT=10
       - AWS_ACCESS_KEY_ID=my-key
@@ -142,7 +142,7 @@ services:
     volumes:
       - .:/usr/src
       - ${MVN_M2}:/root/.m2
-      - ${MVN_SETTINGS_FILE_SAAS}:/root/.m2/settings.xml
+      - ${MVN_SETTINGS_FILE}:/root/.m2/settings.xml
       - ./target/test-reports:/usr/src/target/test-reports
     networks:
       - test

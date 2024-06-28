@@ -1,4 +1,5 @@
-FROM gcr.io/distroless/java17@sha256:2f01c2ff0c0db866ed73085cf1bb5437dd162b48526f89c1baa21dd77ebb5e6d
+FROM gcr.io/distroless/java17@sha256:64967fe3051702640c68bd434813b91a3fc9182f8894962f7638f79a5986c31d
+
 COPY target/ms-account-manager-*.jar /account-manager.jar
 
 
