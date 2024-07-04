@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
+import uk.gov.dwp.health.account.manager.entity.Claimant;
 import uk.gov.dwp.health.account.manager.openapi.model.AccountReturn;
 import uk.gov.dwp.health.account.manager.openapi.model.IdRequest;
 import uk.gov.dwp.health.account.manager.openapi.model.IdentificationResponse;
@@ -23,7 +25,10 @@ import uk.gov.dwp.health.account.manager.service.ClaimantService;
 import uk.gov.dwp.health.account.manager.service.SecureHashService;
 import uk.gov.dwp.health.account.manager.service.TotpRequestService;
 import uk.gov.dwp.health.account.manager.service.TotpVerifyService;
+import uk.gov.dwp.health.account.manager.service.VerifyClaimantAccountLockedService;
+import uk.gov.dwp.health.account.manager.service.VerifyClaimantAccountPasswordService;
 import uk.gov.dwp.health.account.manager.service.impl.Account1FAuthImpl;
+import uk.gov.dwp.health.account.manager.service.impl.Account1FAuthImplV2;
 import uk.gov.dwp.health.account.manager.service.impl.Account2FAuthImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountCheckCanApplyV5Impl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountCreateImpl;
@@ -42,9 +47,10 @@ import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateClaimantDetai
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateEmailImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateNinoImpl;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdatePasswordImpl;
-import uk.gov.dwp.health.account.manager.service.impl.CheckCanApplyService;
 import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateTransferStatusImpl;
-
+import uk.gov.dwp.health.account.manager.service.impl.CheckCanApplyService;
+import uk.gov.dwp.health.account.manager.service.impl.VerifyClaimantAccountLockedServiceImpl;
+import uk.gov.dwp.health.account.manager.service.impl.VerifyClaimantAccountPasswordServiceImpl;
 
 @Slf4j
 @Configuration
@@ -97,10 +103,35 @@ public class ServiceFactory {
   }
 
   @Bean
+  public VerifyClaimantAccountLockedService<Claimant> verifyClaimantAccountLockedService() {
+    return new VerifyClaimantAccountLockedServiceImpl();
+  }
+
+  @Bean
+  public VerifyClaimantAccountPasswordService<Claimant, String>
+      verifyClaimantAccountPasswordService() {
+    return new VerifyClaimantAccountPasswordServiceImpl(
+        claimantService, secureHashService, maxAllowedFailure);
+  }
+
+  @Bean
+  @Primary
   public Account1FAuth<ValidEmailPasswordRequest, ResponseEntity<AccountReturn>> account1FAuth() {
     log.info("Creating Account1FAuth bean instance");
     return new Account1FAuthImpl(
-        claimantService, totpRequestService, secureHashService, maxAllowedFailure);
+        claimantService,
+        totpRequestService,
+        verifyClaimantAccountLockedService(),
+        verifyClaimantAccountPasswordService());
+  }
+
+  @Bean(name = "account1FAuthV2")
+  public Account1FAuth<ValidEmailPasswordRequest, ResponseEntity<AccountReturn>> account1FAuthV2() {
+    log.info("Creating Account1FAuthV2 bean instance");
+    return new Account1FAuthImplV2(
+        claimantService,
+        verifyClaimantAccountLockedService(),
+        verifyClaimantAccountPasswordService());
   }
 
   @Bean
@@ -180,22 +211,22 @@ public class ServiceFactory {
   @Bean
   public AccountUpdateClaimantDetailsImpl accountUpdateClaimantDetails() {
     log.info("Creating accountUpdateClaimantDetails bean instance");
-    return new AccountUpdateClaimantDetailsImpl(claimantService,
-      dataMapper, accountUpdateEmail(), accountUpdateNino());
+    return new AccountUpdateClaimantDetailsImpl(
+        claimantService, dataMapper, accountUpdateEmail(), accountUpdateNino());
   }
 
   @Bean
   public AccountUpdateClaimantDetailsV4Impl accountUpdateClaimantDetailsV4() {
     log.info("Creating accountUpdateClaimantDetailsV4 bean instance");
-    return new AccountUpdateClaimantDetailsV4Impl(claimantService,
-      dataMapper, accountUpdateEmail(), accountUpdateNino());
+    return new AccountUpdateClaimantDetailsV4Impl(
+        claimantService, dataMapper, accountUpdateEmail(), accountUpdateNino());
   }
 
   @Bean
   public AccountUpdateClaimantDetailsV7Impl accountUpdateClaimantDetailsV7() {
     log.info("Creating accountUpdateClaimantDetailsV7 bean instance");
-    return new AccountUpdateClaimantDetailsV7Impl(claimantService,
-      dataMapper, accountUpdateEmail(), accountUpdateNino());
+    return new AccountUpdateClaimantDetailsV7Impl(
+        claimantService, dataMapper, accountUpdateEmail(), accountUpdateNino());
   }
 
   @Bean

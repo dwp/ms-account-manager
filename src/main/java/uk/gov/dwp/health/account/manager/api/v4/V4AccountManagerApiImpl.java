@@ -1,5 +1,6 @@
 package uk.gov.dwp.health.account.manager.api.v4;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -7,10 +8,9 @@ import uk.gov.dwp.health.account.manager.openapi.model.AccountReturn;
 import uk.gov.dwp.health.account.manager.openapi.model.V4AccountDetails;
 import uk.gov.dwp.health.account.manager.openapi.model.V4NewAccountRequest;
 import uk.gov.dwp.health.account.manager.openapi.model.V4UpdateClaimantDetailsRequest;
+import uk.gov.dwp.health.account.manager.openapi.model.ValidEmailPasswordRequest;
 import uk.gov.dwp.health.account.manager.openapi.v4.api.V4Api;
 import uk.gov.dwp.health.account.manager.service.V4AccountManagerServices;
-
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -43,8 +43,14 @@ public class V4AccountManagerApiImpl implements V4Api {
   }
 
   @Override
-  public ResponseEntity<V4AccountDetails> updateClaimantDetails(V4UpdateClaimantDetailsRequest req
-  ) {
+  public ResponseEntity<V4AccountDetails> updateClaimantDetails(
+      V4UpdateClaimantDetailsRequest req) {
     return services.getUpdateClaimantDetails().updateClaimantDetails(req);
+  }
+
+  @Override
+  public ResponseEntity<AccountReturn> validFirstFactor(
+      ValidEmailPasswordRequest validEmailPasswordRequest) {
+    return services.getAccount1FAuth().do1FAuthentication(validEmailPasswordRequest);
   }
 }

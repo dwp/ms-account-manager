@@ -1,5 +1,6 @@
 package uk.gov.dwp.health.account.manager.service;
 
+import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,13 @@ import uk.gov.dwp.health.account.manager.service.impl.AccountUpdateClaimantDetai
 @AllArgsConstructor
 @Getter
 public class V4AccountManagerServices {
-
   private AccountCreateV4Impl accountCreate;
   private AccountGetClaimantDetailsV4Impl claimantDetailsV4;
   private AccountGetClaimantPhoneNumbersV3Impl claimantPhoneNumbersV3;
   private AccountUpdatePassword<PasswordSetResetRequest, ResponseEntity<Void>> updatePassword;
   private AccountIdentification<IdRequest,
       ResponseEntity<IdentificationResponse>> accountIdentification;
+  @Resource(name = "account1FAuthV2")
   private Account1FAuth<ValidEmailPasswordRequest, ResponseEntity<AccountReturn>> account1FAuth;
   private Account2FAuth<ValidTotpRequest, ResponseEntity<Void>> account2FAuth;
   private AccountUpdateClaimantDetailsV4Impl updateClaimantDetails;
